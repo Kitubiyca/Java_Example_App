@@ -1,0 +1,79 @@
+package ru.shop_example.user_service.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import ru.shop_example.user_service.dto.*;
+import ru.shop_example.user_service.service.SignUpService;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("user/sign-up")
+@Slf4j
+public class SignUpController {
+
+    private final SignUpService signUpService;
+
+    @Operation(
+            summary = "Регистрация нового аккаунта",
+            description = "Начинает процесс регистрации нового пользователя",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Успешное начало регистрации",
+                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ConfirmationCodeIdResponseDto.class))}),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Ошибка сервера",
+                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
+            })
+    @PostMapping("/request")
+    public ConfirmationCodeIdResponseDto requestSignUp(@RequestBody @Validated RequestSignUpDto requestSignUpDto) {
+        log.info("Called requestSignUp controller method");
+        return signUpService.registerUser(requestSignUpDto);
+    }
+
+    @Operation(
+            summary = "Повторение кода подтверждения",
+            description = "Повторяет отправку кода подтверждения для регистрации",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Код успешно отправлен",
+                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ConfirmationCodeIdResponseDto.class))}),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Ошибка сервера",
+                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
+            })
+    @PostMapping("/resend-confirmation-code")
+    public ConfirmationCodeIdResponseDto resendConfirmationCodeWithEmail(@RequestBody @Validated EmailDto emailDto) {
+        log.info("Called resendConfirmationCodeWithEmail controller method");
+        return signUpService.resendConfirmationCodeWithEmail(emailDto);
+    }
+
+    @Operation(
+            summary = "Подтверждение регистрации",
+            description = "Завершает процесс регистрации",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Регистрация успешно завершена"),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Ошибка сервера",
+                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
+            })
+    @PostMapping("/confirm")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void confirmSignUp(@RequestBody @Validated ConfirmationCodeDto confirmationCodeDto) {
+        log.info("Called confirmSignUp controller method");
+        signUpService.confirmRegistration(confirmationCodeDto);
+    }
+}

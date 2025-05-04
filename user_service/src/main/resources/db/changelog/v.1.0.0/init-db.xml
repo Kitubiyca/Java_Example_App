@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="1" author="developer">
+
+        <createTable tableName="users">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="email" type="VARCHAR(50)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="firstname" type="VARCHAR(40)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lastname" type="VARCHAR(40)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="patronymic" type="VARCHAR(40)"/>
+            <column name="phone_number" type="VARCHAR(12)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="birth_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="access_date" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="registration_date" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(15)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="role">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(40)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="description" type="TEXT"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="users"
+                                 baseColumnNames="role_id"
+                                 constraintName="fk_user_role_id"
+                                 referencedTableName="role"
+                                 referencedColumnNames="id"/>
+
+        <insert tableName="role">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="CUSTOMER"/>
+            <column name="description" value="simple role description"/>
+        </insert>
+
+        <insert tableName="role">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="MANAGER"/>
+            <column name="description" value="simple role description"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="email" value="example_manager@example.com"/>
+            <column name="password" value="$2a$10$mSpY4527LTS.UtuzzS7sCO2eMV5o7sPCB2udXFiqzoPnC/e8UhPzK"/>
+            <column name="firstname" value="Сергей"/>
+            <column name="lastname" value="Сергеев"/>
+            <column name="patronymic" value="Сергеевич"/>
+            <column name="phone_number" value="098765432109"/>
+            <column name="birth_date" value="1990-01-01"/>
+            <column name="access_date" valueComputed="CURRENT_DATE"/>
+            <column name="registration_date" valueComputed="CURRENT_DATE"/>
+            <column name="status" value="active"/>
+            <column name="role_id" valueComputed="(SELECT id FROM role WHERE name = 'MANAGER')"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="add-tag-1.0.0" author="developer">
+        <tagDatabase tag="v.1.0.0"/>
+    </changeSet>
+
+</databaseChangeLog>

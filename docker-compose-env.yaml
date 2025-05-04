@@ -1,0 +1,75 @@
+name: example_app
+
+networks:
+
+  example-app-network:
+    name: example-app-network
+    driver: bridge
+
+services:
+
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/create_db.sql:/docker-entrypoint-initdb.d/create_db.sql
+    networks:
+      - example-app-network
+
+  redis:
+    container_name: redis
+    image: redis/redis-stack:latest
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    networks:
+      - example-app-network
+
+  mongo:
+    container_name: mongo
+    image: mongo:latest
+    domainname: mongo
+    hostname: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - example-app-network
+  
+  eureka:
+    container_name: eureka
+    image: steeltoeoss/eureka-server:latest
+    ports:
+      - "8761:8761"
+    networks:
+      - example-app-network
+
+  zookeeper:
+    container_name: zookeeper
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - example-app-network
+
+  kafka:
+    container_name: kafka
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - example-app-network

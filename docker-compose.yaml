@@ -1,0 +1,46 @@
+name: example_app
+
+networks:
+
+  example-app-network:
+    name: example-app-network
+    driver: bridge
+    external: true
+
+services:
+
+  gateway:
+    container_name: gateway
+    build: ./gateway
+    ports:
+      - "8081:8081"
+    networks:
+      - example-app-network
+    environment:
+      - secret.jwt.key=mQhsdTPvoyCAk3oucCcpD9K1lPYqFhQxMB5aYOYBmqBQilzIm95czMyFXiz+YgnoqnGBJiCa/aODmEBES8I+FpAcnFSMEd7o5J6CZKT+okzx/H/mhN5nQFZrDPW1r/PzeFokqIA+q+s+hu4T0J6ui+0l/i34l2exxun6uY4RFN3YTpeRDORuw5xmG94qvTE2ukAY9rx32rcMbAvWmH0EHwCkk2U6DFyqhlX+7FDx2tD3JPKGj9TtZNJlev5m0OqChPiv109YAdHSayjTTzyQYgTEf774DHHpNCb3oVkMq43RbIqBv8N0hbFUoR2akJZnbrz3JltYg1oGDrp9GugGFA==
+  
+  user_service:
+    container_name: user_service
+    build: ./user_service
+    ports:
+      - "8082:8082"
+    networks:
+      - example-app-network
+    environment:
+      - secret.jwt.key=mQhsdTPvoyCAk3oucCcpD9K1lPYqFhQxMB5aYOYBmqBQilzIm95czMyFXiz+YgnoqnGBJiCa/aODmEBES8I+FpAcnFSMEd7o5J6CZKT+okzx/H/mhN5nQFZrDPW1r/PzeFokqIA+q+s+hu4T0J6ui+0l/i34l2exxun6uY4RFN3YTpeRDORuw5xmG94qvTE2ukAY9rx32rcMbAvWmH0EHwCkk2U6DFyqhlX+7FDx2tD3JPKGj9TtZNJlev5m0OqChPiv109YAdHSayjTTzyQYgTEf774DHHpNCb3oVkMq43RbIqBv8N0hbFUoR2akJZnbrz3JltYg1oGDrp9GugGFA==
+  
+  product_service:
+    container_name: product_service
+    build: ./product_service
+    ports:
+      - "8083:8083"
+    networks:
+      - example-app-network
+  
+  notification_service:
+    container_name: notification_service
+    build: ./notification_service
+    ports:
+      - "8084:8084"
+    networks:
+      - example-app-network

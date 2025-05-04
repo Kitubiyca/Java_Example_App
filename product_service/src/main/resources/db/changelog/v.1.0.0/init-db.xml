@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="1" author="developer">
+        <createTable tableName="product_type">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="developer">
+        <createTable tableName="product">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="stock" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="developer">
+        <addForeignKeyConstraint constraintName="fk_product_product_type"
+                                 baseTableName="product"
+                                 baseColumnNames="type_id"
+                                 referencedTableName="product_type"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="4" author="developer">
+        <createIndex indexName="idx_product_type_id" tableName="product">
+            <column name="type_id"/>
+        </createIndex>
+        <createIndex indexName="idx_product_name" tableName="product">
+            <column name="name"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="add-tag-1.0.0" author="developer">
+        <tagDatabase tag="v.1.0.0"/>
+    </changeSet>
+
+</databaseChangeLog>
