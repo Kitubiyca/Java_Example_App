@@ -2,21 +2,21 @@ package ru.shop_example.user_service.service.implementation;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.shop_example.user_service.dto.ConfirmationCodeIdResponseDto;
+import ru.shop_example.user_service.dto.OTPIdResponseDto;
 import ru.shop_example.user_service.dto.EmailDto;
 import ru.shop_example.user_service.dto.RequestSignUpDto;
-import ru.shop_example.user_service.dto.ConfirmationCodeDto;
-import ru.shop_example.user_service.dto.redis.RedisConfirmationCodeDto;
+import ru.shop_example.user_service.dto.OTPDto;
+import ru.shop_example.user_service.entity.OTP;
 import ru.shop_example.user_service.entity.Role;
 import ru.shop_example.user_service.entity.User;
 import ru.shop_example.user_service.entity.constant.Intent;
 import ru.shop_example.user_service.entity.constant.UserStatus;
 import ru.shop_example.user_service.exception.custom.*;
 import ru.shop_example.user_service.mapper.UserMapper;
+import ru.shop_example.user_service.repository.OTPRepository;
 import ru.shop_example.user_service.repository.RoleRepository;
 import ru.shop_example.user_service.repository.UserRepository;
 import ru.shop_example.user_service.service.SignUpService;
@@ -33,13 +33,13 @@ public class SignUpServiceImpl implements SignUpService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final RedisTemplate<String, RedisConfirmationCodeDto> redisConfirmationCodeDtoRedisTemplate;
+    private final OTPRepository otpRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final Utils utils;
 
     @Transactional
-    public ConfirmationCodeIdResponseDto registerUser(RequestSignUpDto requestSignUpDto){
+    public OTPIdResponseDto registerUser(RequestSignUpDto requestSignUpDto){
         log.info("Called registerUser service method");
         if (userRepository.existsByEmail(requestSignUpDto.getEmail())) throw new UserAlreadyExistsException("User with this email already exists.");
         if (userRepository.existsByPhoneNumber(requestSignUpDto.getPhoneNumber())) throw new UserAlreadyExistsException("User with this phone number already exists.");
@@ -51,27 +51,33 @@ public class SignUpServiceImpl implements SignUpService {
         user.setStatus(UserStatus.pending);
         user.setRole(userRole);
         userRepository.save(user);
-        return new ConfirmationCodeIdResponseDto(utils.sendConfirmationCodeWithEmail(user, Intent.signUp, Duration.of(5, ChronoUnit.MINUTES)));
+        return new OTPIdResponseDto(handleOTP(user).getId());
     }
 
-    public ConfirmationCodeIdResponseDto resendConfirmationCodeWithEmail(EmailDto emailDto){
-        log.info("Called resendConfirmationCodeWithEmail service method");
+    public OTPIdResponseDto resendOTPWithEmail(EmailDto emailDto){
+        log.info("Called resendOTPWithEmail service method");
         User user = userRepository.findUserByEmail(emailDto.getEmail()).orElseThrow(() -> new UserNotFoundException(String.format("User with email %s not found", emailDto.getEmail())));
         if (!user.getStatus().equals(UserStatus.pending)) throw new RequestDeniedException(String.format("User status is %s instead of %s", user.getStatus(), UserStatus.pending));
-        return new ConfirmationCodeIdResponseDto(utils.sendConfirmationCodeWithEmail(user, Intent.signUp, Duration.of(5, ChronoUnit.MINUTES)));
+        return new OTPIdResponseDto(handleOTP(user).getId());
     }
 
     @Transactional
-    public void confirmRegistration(ConfirmationCodeDto confirmationCodeDto){
+    public void confirmRegistration(OTPDto OTPDto){
         log.info("Called ConfirmRegistration service method");
-        RedisConfirmationCodeDto redisConfirmationCodeDto;
-        redisConfirmationCodeDto = redisConfirmationCodeDtoRedisTemplate.opsForValue().get(String.format("code:%s:%s", Intent.signUp, confirmationCodeDto.getId()));
-        if (redisConfirmationCodeDto == null) throw new ConfirmationCodeTimedOutException("Confirmation code timed out or don't exist");
-        User user = userRepository.findById(redisConfirmationCodeDto.getUserId()).orElseThrow(() -> new UserNotFoundException("Linked user not found"));
+        OTP otp = otpRepository.getByIntentAndId(Intent.signUp, OTPDto.getId());
+        if (otp == null) throw new OTPTimedOutException("Confirmation code timed out or don't exist");
+        User user = userRepository.findById(otp.getUserId()).orElseThrow(() -> new UserNotFoundException("Linked user not found"));
         if (!user.getStatus().equals(UserStatus.pending)) throw new RequestDeniedException(String.format("User status is %s instead of %s", user.getStatus(), UserStatus.pending));
-        if (!redisConfirmationCodeDto.getValue().equals(confirmationCodeDto.getValue())) throw new OTPException("Invalid 4-digits code");
+        if (!otp.getValue().equals(OTPDto.getValue())) throw new OTPException("Invalid 4-digits code");
         user.setStatus(UserStatus.active);
         userRepository.save(user);
-        redisConfirmationCodeDtoRedisTemplate.delete(String.format("code:%s:%s", Intent.signUp, confirmationCodeDto.getId()));
+        otpRepository.deleteByIdAndIntent(otp.getId(), otp.getIntent());
+    }
+
+    private OTP handleOTP(User user){
+        OTP otp = utils.createOTP(user.getId(), Intent.signUp);
+        otpRepository.set(otp, Duration.of(5, ChronoUnit.MINUTES));
+        utils.sendOTPWithEmail(user, otp);
+        return otp;
     }
 }

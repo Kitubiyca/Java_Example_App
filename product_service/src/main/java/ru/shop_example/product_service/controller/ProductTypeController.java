@@ -22,7 +22,7 @@ import java.util.UUID;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("product/type")
+@RequestMapping("productTypes")
 public class ProductTypeController {
 
     private final ProductTypeService productTypeService;
@@ -41,7 +41,7 @@ public class ProductTypeController {
                             description = "Ошибка сервера",
                             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
             })
-    @GetMapping("get/{id}")
+    @GetMapping("{id}")
     public ProductTypeDto getProductTypeById(@PathVariable UUID id){
         log.info("Called getProductTypeById controller method");
         return productTypeMapper.productTypeToProductTypeDto(productTypeService.getProductTypeById(id));
@@ -53,7 +53,7 @@ public class ProductTypeController {
             tags = {"AUTHENTICATED", "ROLE_MANAGER"},
             responses = {
                     @ApiResponse(
-                            responseCode = "200",
+                            responseCode = "201",
                             description = "Данные получены",
                             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = IdDto.class))}),
                     @ApiResponse(
@@ -61,7 +61,8 @@ public class ProductTypeController {
                             description = "Ошибка сервера",
                             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
             })
-    @PostMapping("create")
+    @PostMapping
+    @ResponseStatus(code = HttpStatus.CREATED)
     public IdDto createProductType(@RequestBody @Validated(OnCreate.class) ProductTypeDto productTypeDto){
         log.info("Called createProductType controller method");
         return new IdDto(productTypeService.createProductType(productTypeMapper.productTypeDtoToProductType(productTypeDto)).getId());
@@ -80,7 +81,7 @@ public class ProductTypeController {
                             description = "Ошибка сервера",
                             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
             })
-    @PostMapping ("update")
+    @PatchMapping
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void updateProductType(@RequestBody @Validated(OnUpdate.class) ProductTypeDto productTypeDto){
         log.info("Called updateProductType controller method");
@@ -100,7 +101,7 @@ public class ProductTypeController {
                             description = "Ошибка сервера",
                             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
             })
-    @GetMapping ("delete/{id}")
+    @DeleteMapping ("{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void deleteProductTypeById(@PathVariable UUID id){
         log.info("Called deleteProductTypeById controller method");

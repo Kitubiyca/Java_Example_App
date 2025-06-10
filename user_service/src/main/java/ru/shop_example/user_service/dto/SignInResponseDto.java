@@ -10,6 +10,6 @@ import lombok.*;
 @ToString
 public class SignInResponseDto {
 
-    String accessToken;
-    String refreshToken;
+    private String accessToken;
+    private String refreshToken;
 }

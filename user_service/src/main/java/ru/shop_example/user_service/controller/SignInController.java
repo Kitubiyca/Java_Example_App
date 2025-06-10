@@ -19,7 +19,7 @@ import ru.shop_example.user_service.service.SignInService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("user/sign-in")
+@RequestMapping("sign-in")
 @Slf4j
 public class SignInController {
 

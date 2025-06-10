@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @ToString
-public class ConfirmationCodeDto {
+public class OTPDto {
 
     @NotBlank
     private String name;

@@ -14,7 +14,7 @@ import ru.shop_example.user_service.service.SignUpService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("user/sign-up")
+@RequestMapping("sign-up")
 @Slf4j
 public class SignUpController {
 
@@ -27,14 +27,14 @@ public class SignUpController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Успешное начало регистрации",
-                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ConfirmationCodeIdResponseDto.class))}),
+                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = OTPIdResponseDto.class))}),
                     @ApiResponse(
                             responseCode = "500",
                             description = "Ошибка сервера",
                             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
             })
     @PostMapping("/request")
-    public ConfirmationCodeIdResponseDto requestSignUp(@RequestBody @Validated RequestSignUpDto requestSignUpDto) {
+    public OTPIdResponseDto requestSignUp(@RequestBody @Validated RequestSignUpDto requestSignUpDto) {
         log.info("Called requestSignUp controller method");
         return signUpService.registerUser(requestSignUpDto);
     }
@@ -46,16 +46,16 @@ public class SignUpController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Код успешно отправлен",
-                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ConfirmationCodeIdResponseDto.class))}),
+                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = OTPIdResponseDto.class))}),
                     @ApiResponse(
                             responseCode = "500",
                             description = "Ошибка сервера",
                             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
             })
     @PostMapping("/resend-confirmation-code")
-    public ConfirmationCodeIdResponseDto resendConfirmationCodeWithEmail(@RequestBody @Validated EmailDto emailDto) {
-        log.info("Called resendConfirmationCodeWithEmail controller method");
-        return signUpService.resendConfirmationCodeWithEmail(emailDto);
+    public OTPIdResponseDto resendOTPWithEmail(@RequestBody @Validated EmailDto emailDto) {
+        log.info("Called resendOTPWithEmail controller method");
+        return signUpService.resendOTPWithEmail(emailDto);
     }
 
     @Operation(
@@ -63,7 +63,7 @@ public class SignUpController {
             description = "Завершает процесс регистрации",
             responses = {
                     @ApiResponse(
-                            responseCode = "204",
+                            responseCode = "201",
                             description = "Регистрация успешно завершена"),
                     @ApiResponse(
                             responseCode = "500",
@@ -71,9 +71,9 @@ public class SignUpController {
                             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
             })
     @PostMapping("/confirm")
-    @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public void confirmSignUp(@RequestBody @Validated ConfirmationCodeDto confirmationCodeDto) {
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public void confirmSignUp(@RequestBody @Validated OTPDto OTPDto) {
         log.info("Called confirmSignUp controller method");
-        signUpService.confirmRegistration(confirmationCodeDto);
+        signUpService.confirmRegistration(OTPDto);
     }
 }

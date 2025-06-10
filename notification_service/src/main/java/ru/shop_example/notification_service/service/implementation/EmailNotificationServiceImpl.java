@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
-import ru.shop_example.notification_service.dto.ConfirmationCodeDto;
+import ru.shop_example.notification_service.dto.OTPDto;
 import ru.shop_example.notification_service.service.EmailNotificationService;
 
 @Service
@@ -19,14 +19,14 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
     @Value("${mail.sender.name}")
     private String from;
 
-    public void sendConfirmationCode(ConfirmationCodeDto confirmationCodeDto){
-        log.info("Called sendConfirmationCode service method");
+    public void sendOTP(OTPDto OTPDto){
+        log.info("Called sendOTP service method");
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(from);
-        message.setTo(confirmationCodeDto.getEmail());
+        message.setTo(OTPDto.getEmail());
         message.setSubject("Код подтверждения в Example_App");
-        message.setText(String.format("Здравствуйте, %s. Ваш код подтверждения: %s", confirmationCodeDto.getName(), confirmationCodeDto.getCode()));
+        message.setText(String.format("Здравствуйте, %s. Ваш код подтверждения: %s", OTPDto.getName(), OTPDto.getCode()));
         //mailSender.send(message);
-        log.info("code is {}", confirmationCodeDto.getCode());
+        log.info("code is {}", OTPDto.getCode());
     }
 }

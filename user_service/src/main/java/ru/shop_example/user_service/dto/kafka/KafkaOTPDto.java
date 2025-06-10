@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @ToString
-public class KafkaConfirmationCodeDto {
+public class KafkaOTPDto {
 
     private String name;
     private String email;

@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("user/entity")
+@RequestMapping("user")
 @Slf4j
 public class UserController {
 
@@ -37,7 +37,7 @@ public class UserController {
                             description = "Ошибка сервера",
                             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
             })
-    @GetMapping("get")
+    @GetMapping
     public UserInfoDto getUserProfile(@RequestHeader("user-id") UUID userId){
         return userService.getProfile(userId);
     }
@@ -56,7 +56,7 @@ public class UserController {
                             description = "Ошибка сервера",
                             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
             })
-    @GetMapping("get-test")
+    @GetMapping("test")
     public UserInfoDto getUserProfileTest(@RequestHeader("user-id") UUID userId){
         return userService.getProfile(userId); //TODO remove test endpoint
     }
@@ -74,7 +74,7 @@ public class UserController {
                             description = "Ошибка сервера",
                             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
             })
-    @PatchMapping("update")
+    @PatchMapping
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void updateUserProfile(@RequestHeader("user-id") UUID userId, @RequestBody @Validated UpdateUserProfileDto updateUserProfileDto){
         userService.updateProfile(userId, updateUserProfileDto);
@@ -93,7 +93,7 @@ public class UserController {
                             description = "Ошибка сервера",
                             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
             })
-    @DeleteMapping("delete")
+    @DeleteMapping
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void deleteUserProfile(@RequestHeader("user-id") UUID userId, @RequestBody @Validated PasswordDto passwordDto){
         userService.deleteProfile(userId, passwordDto);

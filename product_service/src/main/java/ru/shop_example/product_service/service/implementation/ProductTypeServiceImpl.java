@@ -4,6 +4,8 @@ import jakarta.ws.rs.NotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.shop_example.product_service.entity.Product;
 import ru.shop_example.product_service.entity.ProductType;
 import ru.shop_example.product_service.repository.ProductTypeRepository;
 import ru.shop_example.product_service.service.ProductTypeService;
@@ -24,12 +26,16 @@ public class ProductTypeServiceImpl implements ProductTypeService {
 
     public ProductType createProductType(ProductType productType){
         log.info("Called createProductType service method");
+        if (productType.getId() != null) throw new RuntimeException("xxx");//TODO исправить
         return productTypeRepository.save(productType);
     }
 
+    @Transactional
     public ProductType updateProductType(ProductType productType){
         log.info("Called updateProductType service method");
-        if (productTypeRepository.existsById(productType.getId())) throw new NotFoundException(String.format("Product with id %s not found", productType.getId()));
+        ProductType savedProductType = productTypeRepository.findById(productType.getId()).orElseThrow(() -> new NotFoundException(String.format("ProductType with id %s not found", productType.getId())));
+        savedProductType.setName(productType.getName());
+        savedProductType.setDescription(productType.getDescription());
         return productTypeRepository.save(productType);
     }
 

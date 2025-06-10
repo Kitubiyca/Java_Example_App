@@ -1,10 +1,14 @@
 package ru.shop_example.gateway.exception;
 
+import jakarta.ws.rs.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import ru.shop_example.gateway.dto.ErrorDto;
 import ru.shop_example.gateway.exception.custom.JWTAuthorizationFailedException;
@@ -16,8 +20,9 @@ public class ExceptionHandlerController {
 
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public ErrorDto handlerServerException (Exception exception, ServerWebExchange exchange){
+    public ErrorDto serverExceptionHandler(Exception exception, ServerWebExchange exchange) {
         log.error(exception.getMessage());
+        log.error(exception.getClass().getName());
         return new ErrorDto(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 HttpStatus.INTERNAL_SERVER_ERROR.toString(),
@@ -26,9 +31,27 @@ public class ExceptionHandlerController {
         );
     }
 
+    @ExceptionHandler(WebClientResponseException.class)
+    public ResponseEntity<ErrorDto> webClientResponseExceptionExceptionHandler(WebClientResponseException exception) {
+        log.error(exception.getMessage());
+        return ResponseEntity.status(exception.getStatusCode()).body(exception.getResponseBodyAs(ErrorDto.class));
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ErrorDto> notFoundExceptionHandler(ResponseStatusException exception, ServerWebExchange exchange) {
+        log.error(exception.getMessage());
+        return ResponseEntity.status(exception.getStatusCode()).body(
+                new ErrorDto(
+                        HttpStatus.NOT_FOUND,
+                        HttpStatus.NOT_FOUND.toString(),
+                        exchange.getRequest().getURI().toString(),
+                        exception.getMessage()
+                ));
+    }
+
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(JWTAuthorizationFailedException.class)
-    public ErrorDto jwtAuthorizationFailedException (JWTAuthorizationFailedException exception, ServerWebExchange exchange){
+    public ErrorDto jwtAuthorizationFailedExceptionHandler(JWTAuthorizationFailedException exception, ServerWebExchange exchange) {
         log.error(exception.getMessage());
         return new ErrorDto(
                 HttpStatus.UNAUTHORIZED,
@@ -40,7 +63,7 @@ public class ExceptionHandlerController {
 
     @ResponseStatus(code = HttpStatus.FORBIDDEN)
     @ExceptionHandler(UserRoleCheckException.class)
-    public ErrorDto userRoleCheckException (UserRoleCheckException exception, ServerWebExchange exchange){
+    public ErrorDto userRoleCheckExceptionHandler(UserRoleCheckException exception, ServerWebExchange exchange) {
         log.error(exception.getMessage());
         return new ErrorDto(
                 HttpStatus.FORBIDDEN,

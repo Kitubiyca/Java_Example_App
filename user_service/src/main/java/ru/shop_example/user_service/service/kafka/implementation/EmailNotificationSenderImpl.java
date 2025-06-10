@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import ru.shop_example.user_service.dto.kafka.KafkaConfirmationCodeDto;
+import ru.shop_example.user_service.dto.kafka.KafkaOTPDto;
 import ru.shop_example.user_service.service.kafka.EmailNotificationSender;
 
 @Service
@@ -12,10 +12,10 @@ import ru.shop_example.user_service.service.kafka.EmailNotificationSender;
 @Slf4j
 public class EmailNotificationSenderImpl implements EmailNotificationSender {
 
-    private final KafkaTemplate<String, KafkaConfirmationCodeDto> kafkaTemplate;
+    private final KafkaTemplate<String, KafkaOTPDto> kafkaTemplate;
 
-    public void sendToEmailConfirmationCodeTopic(KafkaConfirmationCodeDto kafkaConfirmationCodeDto){
-        log.info("Called sendToEmailConfirmationCodeTopic kafka method");
-        kafkaTemplate.send("email-confirmation-code-topic", kafkaConfirmationCodeDto);
+    public void sendToEmailOTPTopic(KafkaOTPDto kafkaOTPDto){
+        log.info("Called sendToEmailOTPTopic kafka method");
+        kafkaTemplate.send("email-otp-topic", kafkaOTPDto);
     }
 }

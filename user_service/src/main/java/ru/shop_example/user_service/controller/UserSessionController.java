@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("user/session")
+@RequestMapping("session")
 @Slf4j
 public class UserSessionController {
 
@@ -34,7 +34,7 @@ public class UserSessionController {
                             description = "Ошибка сервера",
                             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
             })
-    @PostMapping("terminate")
+    @DeleteMapping("terminate")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void terminateCurrentSession(@RequestHeader("session-id") UUID sessionId){
         log.info("Called terminateCurrentSession controller method");
@@ -54,7 +54,7 @@ public class UserSessionController {
                             description = "Ошибка сервера",
                             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
             })
-    @PostMapping("terminateAll")
+    @DeleteMapping("terminateAll")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void terminateAllSessions(@RequestHeader("user-id") UUID userId){
         log.info("Called terminateAllSessions controller method");

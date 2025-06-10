@@ -1,8 +1,11 @@
 package ru.shop_example.product_service.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import ru.shop_example.product_service.dto.BooleanDto;
 import ru.shop_example.product_service.entity.Product;
+import ru.shop_example.product_service.entity.ProductSearchParams;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface ProductService {
@@ -10,6 +13,8 @@ public interface ProductService {
     public Product createProduct(Product product);
     public Product updateProduct(Product product);
     public void deleteProductById(UUID id);
-    public List<Product> getAllProducts();
-    public List<Product> getAllProductsByTypeId(UUID typeId);
+    public Page<Product> getAllProducts(Pageable pageable);
+    public Page<Product> getAllProductsByTypeId(UUID typeId, Pageable pageable);
+    public Page<Product> searchProducts(ProductSearchParams productSearchParams, Pageable pageable);
+    public BooleanDto isProductExist(UUID id);
 }

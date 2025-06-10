@@ -35,10 +35,16 @@ services:
     image: mongo:latest
     domainname: mongo
     hostname: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: pass
+    volumes:
+      - ./mongo:/docker-entrypoint-initdb.d:ro
     ports:
       - "27017:27017"
     networks:
       - example-app-network
+
   
   eureka:
     container_name: eureka

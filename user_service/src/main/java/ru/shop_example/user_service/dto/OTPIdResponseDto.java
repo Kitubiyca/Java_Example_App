@@ -1,6 +1,5 @@
 package ru.shop_example.user_service.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.UUID;
@@ -9,12 +8,8 @@ import java.util.UUID;
 @Setter(AccessLevel.PUBLIC)
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @ToString
-public class ConfirmationCodeDto {
+public class OTPIdResponseDto {
 
-    @NotBlank
-    private UUID id;
-    @NotBlank
-    private String value;
+    private UUID value;
 }

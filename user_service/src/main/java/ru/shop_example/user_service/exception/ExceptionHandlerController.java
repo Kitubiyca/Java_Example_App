@@ -4,6 +4,8 @@ package ru.shop_example.user_service.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -27,13 +29,24 @@ public class ExceptionHandlerController {
                 exception.getMessage());
     }
 
-    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(InternalServerLogicException.class)
-    public ErrorDto internalServerLogicExceptionHandler(InternalServerLogicException exception, HttpServletRequest request) {
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ErrorDto methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
         return new ErrorDto(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                HttpStatus.INTERNAL_SERVER_ERROR.toString(),
+                HttpStatus.BAD_REQUEST,
+                HttpStatus.BAD_REQUEST.toString(),
+                request.getRequestURI(),
+                exception.getMessage());
+    }
+
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BindException.class)
+    public ErrorDto bindExceptionHandler(BindException exception, HttpServletRequest request) {
+        log.error(exception.getMessage());
+        return new ErrorDto(
+                HttpStatus.BAD_REQUEST,
+                HttpStatus.BAD_REQUEST.toString(),
                 request.getRequestURI(),
                 exception.getMessage());
     }
@@ -72,8 +85,8 @@ public class ExceptionHandlerController {
     }
 
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ConfirmationCodeTimedOutException.class)
-    public ErrorDto confirmationCodeTimedOutExceptionHandler(ConfirmationCodeTimedOutException exception, HttpServletRequest request) {
+    @ExceptionHandler(OTPTimedOutException.class)
+    public ErrorDto OTPTimedOutExceptionHandler(OTPTimedOutException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
         return new ErrorDto(
                 HttpStatus.BAD_REQUEST,

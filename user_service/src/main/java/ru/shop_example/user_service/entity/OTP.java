@@ -1,6 +1,7 @@
-package ru.shop_example.user_service.dto.redis;
+package ru.shop_example.user_service.entity;
 
 import lombok.*;
+import ru.shop_example.user_service.entity.constant.Intent;
 
 import java.util.UUID;
 
@@ -10,8 +11,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @ToString
-public class RedisConfirmationCodeDto {
+public class OTP {
 
+    private UUID id;
     private UUID userId;
+    private Intent intent;
     private String value;
 }

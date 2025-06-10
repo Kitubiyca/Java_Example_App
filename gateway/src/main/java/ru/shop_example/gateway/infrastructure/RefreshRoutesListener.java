@@ -19,6 +19,6 @@ public class RefreshRoutesListener implements ApplicationListener<RefreshRoutesE
     @Override
     public void onApplicationEvent(RefreshRoutesEvent event) {
         log.info("Refreshing routes");
-        serviceHandler.handleServices(reactiveDiscoveryClient.getServices());
+        serviceHandler.handleServices(reactiveDiscoveryClient.getServices()).subscribe();
     }
 }

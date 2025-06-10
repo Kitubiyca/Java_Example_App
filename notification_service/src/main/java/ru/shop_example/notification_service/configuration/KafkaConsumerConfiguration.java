@@ -9,7 +9,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import ru.shop_example.notification_service.dto.ConfirmationCodeDto;
+import ru.shop_example.notification_service.dto.OTPDto;
 
 @Configuration
 @RequiredArgsConstructor
@@ -18,18 +18,18 @@ public class KafkaConsumerConfiguration {
     private final KafkaProperties kafkaProperties;
 
     @Bean
-    public ConsumerFactory<String, ConfirmationCodeDto> confirmationCodeDtoConsumerFactory() {
+    public ConsumerFactory<String, OTPDto> otpDtoConsumerFactory() {
         return new DefaultKafkaConsumerFactory<>(
                 kafkaProperties.buildConsumerProperties(),
                 new StringDeserializer(),
-                new JsonDeserializer<>(ConfirmationCodeDto.class, false)
+                new JsonDeserializer<>(OTPDto.class, false)
         );
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, ConfirmationCodeDto> confirmationCodeDtoContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, ConfirmationCodeDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(confirmationCodeDtoConsumerFactory());
+    public ConcurrentKafkaListenerContainerFactory<String, OTPDto> otpDtoContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, OTPDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(otpDtoConsumerFactory());
         return factory;
     }
 }

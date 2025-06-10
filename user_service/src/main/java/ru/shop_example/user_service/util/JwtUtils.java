@@ -4,9 +4,11 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import ru.shop_example.user_service.configuration.TokenProperties;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -14,14 +16,12 @@ import java.util.UUID;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class JwtUtils {
 
     @Value("${secret.jwt.key}")
     private String secretKey;
-    @Value("${token.access.ttl}")
-    private long accessTokenTTL;
-    @Value("${token.refresh.ttl}")
-    private long refreshTokenTTL;
+    private final TokenProperties tokenProperties;
 
     public String generateAccessToken(UUID sessionId, UUID userId, String userRole){
         log.info("Called generateAccessToken utils method");
@@ -31,7 +31,7 @@ public class JwtUtils {
                 .claim("userId", userId)
                 .claim("userRole", userRole)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + accessTokenTTL * 1000))
+                .expiration(new Date(System.currentTimeMillis() + tokenProperties.access().ttl().toMillis()))
                 .signWith(useSecretKey(secretKey))
                 .compact();
     }
@@ -44,7 +44,7 @@ public class JwtUtils {
                 .claim("userId", userId)
                 .claim("userRole", userRole)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + refreshTokenTTL * 1000))
+                .expiration(new Date(System.currentTimeMillis() + tokenProperties.refresh().ttl().toMillis()))
                 .signWith(useSecretKey(secretKey))
                 .compact();
     }
