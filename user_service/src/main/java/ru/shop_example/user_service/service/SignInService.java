@@ -1,11 +1,11 @@
 package ru.shop_example.user_service.service;
 
-import ru.shop_example.user_service.dto.RefreshTokenDto;
-import ru.shop_example.user_service.dto.SignInDto;
-import ru.shop_example.user_service.dto.SignInResponseDto;
+import ru.shop_example.user_service.dto.RequestRefreshTokenDto;
+import ru.shop_example.user_service.dto.RequestSignInDto;
+import ru.shop_example.user_service.dto.ResponseSignInDto;
 
 public interface SignInService {
 
-    SignInResponseDto signIn(SignInDto signInDto);
-    SignInResponseDto signInWithRefreshToken(RefreshTokenDto refreshTokenDto);
+    ResponseSignInDto signIn(RequestSignInDto requestSignInDto);
+    ResponseSignInDto signInWithRefreshToken(RequestRefreshTokenDto requestRefreshTokenDto);
 }

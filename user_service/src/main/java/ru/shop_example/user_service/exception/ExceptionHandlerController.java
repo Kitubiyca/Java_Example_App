@@ -1,6 +1,7 @@
 package ru.shop_example.user_service.exception;
 
 
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -10,19 +11,21 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ru.shop_example.user_service.dto.ErrorDto;
+import ru.shop_example.user_service.dto.ResponseErrorDto;
 import ru.shop_example.user_service.exception.custom.*;
 
 @ControllerAdvice
 @Slf4j
 @RestController
+@Hidden
 public class ExceptionHandlerController {
 
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public ErrorDto serverExceptionHandler(Exception exception, HttpServletRequest request) {
+    public ResponseErrorDto serverExceptionHandler(Exception exception, HttpServletRequest request) {
         log.error(exception.getMessage());
-        return new ErrorDto(
+        exception.getStackTrace();
+        return new ResponseErrorDto(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 HttpStatus.INTERNAL_SERVER_ERROR.toString(),
                 request.getRequestURI(),
@@ -31,9 +34,9 @@ public class ExceptionHandlerController {
 
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ErrorDto methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exception, HttpServletRequest request) {
+    public ResponseErrorDto methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
-        return new ErrorDto(
+        return new ResponseErrorDto(
                 HttpStatus.BAD_REQUEST,
                 HttpStatus.BAD_REQUEST.toString(),
                 request.getRequestURI(),
@@ -42,9 +45,9 @@ public class ExceptionHandlerController {
 
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BindException.class)
-    public ErrorDto bindExceptionHandler(BindException exception, HttpServletRequest request) {
+    public ResponseErrorDto bindExceptionHandler(BindException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
-        return new ErrorDto(
+        return new ResponseErrorDto(
                 HttpStatus.BAD_REQUEST,
                 HttpStatus.BAD_REQUEST.toString(),
                 request.getRequestURI(),
@@ -53,9 +56,9 @@ public class ExceptionHandlerController {
 
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserAlreadyExistsException.class)
-    public ErrorDto userAlreadyExistsExceptionHandler(UserAlreadyExistsException exception, HttpServletRequest request) {
+    public ResponseErrorDto userAlreadyExistsExceptionHandler(UserAlreadyExistsException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
-        return new ErrorDto(
+        return new ResponseErrorDto(
                 HttpStatus.BAD_REQUEST,
                 HttpStatus.BAD_REQUEST.toString(),
                 request.getRequestURI(),
@@ -64,9 +67,20 @@ public class ExceptionHandlerController {
 
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     @ExceptionHandler(UserNotFoundException.class)
-    public ErrorDto userNotFoundExceptionHandler(UserNotFoundException exception, HttpServletRequest request) {
+    public ResponseErrorDto userNotFoundExceptionHandler(UserNotFoundException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
-        return new ErrorDto(
+        return new ResponseErrorDto(
+                HttpStatus.NOT_FOUND,
+                HttpStatus.NOT_FOUND.toString(),
+                request.getRequestURI(),
+                exception.getMessage());
+    }
+
+    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseErrorDto entityNotFoundExceptionHandler(EntityNotFoundException exception, HttpServletRequest request) {
+        log.error(exception.getMessage());
+        return new ResponseErrorDto(
                 HttpStatus.NOT_FOUND,
                 HttpStatus.NOT_FOUND.toString(),
                 request.getRequestURI(),
@@ -75,9 +89,9 @@ public class ExceptionHandlerController {
 
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(RequestDeniedException.class)
-    public ErrorDto requestDeniedExceptionHandler(RequestDeniedException exception, HttpServletRequest request) {
+    public ResponseErrorDto requestDeniedExceptionHandler(RequestDeniedException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
-        return new ErrorDto(
+        return new ResponseErrorDto(
                 HttpStatus.BAD_REQUEST,
                 HttpStatus.BAD_REQUEST.toString(),
                 request.getRequestURI(),
@@ -86,9 +100,9 @@ public class ExceptionHandlerController {
 
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(OTPTimedOutException.class)
-    public ErrorDto OTPTimedOutExceptionHandler(OTPTimedOutException exception, HttpServletRequest request) {
+    public ResponseErrorDto OTPTimedOutExceptionHandler(OTPTimedOutException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
-        return new ErrorDto(
+        return new ResponseErrorDto(
                 HttpStatus.BAD_REQUEST,
                 HttpStatus.BAD_REQUEST.toString(),
                 request.getRequestURI(),
@@ -97,9 +111,9 @@ public class ExceptionHandlerController {
 
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(OTPException.class)
-    public ErrorDto otpExceptionHandler(OTPException exception, HttpServletRequest request) {
+    public ResponseErrorDto otpExceptionHandler(OTPException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
-        return new ErrorDto(
+        return new ResponseErrorDto(
                 HttpStatus.BAD_REQUEST,
                 HttpStatus.BAD_REQUEST.toString(),
                 request.getRequestURI(),
@@ -108,9 +122,9 @@ public class ExceptionHandlerController {
 
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(JWTValidationException.class)
-    public ErrorDto jwtValidationExceptionHandler(JWTValidationException exception, HttpServletRequest request) {
+    public ResponseErrorDto jwtValidationExceptionHandler(JWTValidationException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
-        return new ErrorDto(
+        return new ResponseErrorDto(
                 HttpStatus.BAD_REQUEST,
                 HttpStatus.BAD_REQUEST.toString(),
                 request.getRequestURI(),
@@ -119,9 +133,9 @@ public class ExceptionHandlerController {
 
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(AuthorizationFailedException.class)
-    public ErrorDto authorizationFailedExceptionHandler(AuthorizationFailedException exception, HttpServletRequest request) {
+    public ResponseErrorDto authorizationFailedExceptionHandler(AuthorizationFailedException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
-        return new ErrorDto(
+        return new ResponseErrorDto(
                 HttpStatus.UNAUTHORIZED,
                 HttpStatus.UNAUTHORIZED.toString(),
                 request.getRequestURI(),

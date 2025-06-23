@@ -27,14 +27,10 @@ public class SignUpController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Успешное начало регистрации",
-                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = OTPIdResponseDto.class))}),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Ошибка сервера",
-                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
+                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseOTPIdDto.class))}),
             })
     @PostMapping("/request")
-    public OTPIdResponseDto requestSignUp(@RequestBody @Validated RequestSignUpDto requestSignUpDto) {
+    public ResponseOTPIdDto requestSignUp(@RequestBody @Validated RequestSignUpDto requestSignUpDto) {
         log.info("Called requestSignUp controller method");
         return signUpService.registerUser(requestSignUpDto);
     }
@@ -46,16 +42,16 @@ public class SignUpController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Код успешно отправлен",
-                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = OTPIdResponseDto.class))}),
+                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseOTPIdDto.class))}),
                     @ApiResponse(
-                            responseCode = "500",
-                            description = "Ошибка сервера",
-                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
+                            responseCode = "404",
+                            description = "Пользователь не найден",
+                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseErrorDto.class))}),
             })
     @PostMapping("/resend-confirmation-code")
-    public OTPIdResponseDto resendOTPWithEmail(@RequestBody @Validated EmailDto emailDto) {
+    public ResponseOTPIdDto resendOTPWithEmail(@RequestBody @Validated RequestEmailDto requestEmailDto) {
         log.info("Called resendOTPWithEmail controller method");
-        return signUpService.resendOTPWithEmail(emailDto);
+        return signUpService.resendOTPWithEmail(requestEmailDto);
     }
 
     @Operation(
@@ -66,14 +62,14 @@ public class SignUpController {
                             responseCode = "201",
                             description = "Регистрация успешно завершена"),
                     @ApiResponse(
-                            responseCode = "500",
-                            description = "Ошибка сервера",
-                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
+                            responseCode = "404",
+                            description = "Пользователь не найден",
+                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseErrorDto.class))}),
             })
     @PostMapping("/confirm")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public void confirmSignUp(@RequestBody @Validated OTPDto OTPDto) {
+    public void confirmSignUp(@RequestBody @Validated RequestOTPDto RequestOTPDto) {
         log.info("Called confirmSignUp controller method");
-        signUpService.confirmRegistration(OTPDto);
+        signUpService.confirmRegistration(RequestOTPDto);
     }
 }

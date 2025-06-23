@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.shop_example.user_service.dto.ErrorDto;
-import ru.shop_example.user_service.dto.RefreshTokenDto;
-import ru.shop_example.user_service.dto.SignInDto;
-import ru.shop_example.user_service.dto.SignInResponseDto;
+import ru.shop_example.user_service.dto.ResponseErrorDto;
+import ru.shop_example.user_service.dto.RequestRefreshTokenDto;
+import ru.shop_example.user_service.dto.RequestSignInDto;
+import ru.shop_example.user_service.dto.ResponseSignInDto;
 import ru.shop_example.user_service.service.SignInService;
 
 @RestController
@@ -32,16 +32,20 @@ public class SignInController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Успешная авторизация",
-                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = SignInResponseDto.class))}),
+                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseSignInDto.class))}),
                     @ApiResponse(
-                            responseCode = "500",
-                            description = "Ошибка сервера",
-                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
+                            responseCode = "401",
+                            description = "Ошибка авторизации",
+                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseErrorDto.class))}),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Пользователь не найден",
+                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseErrorDto.class))}),
             })
     @PostMapping("/by-password")
-    public SignInResponseDto signInWithPassword(@RequestBody @Validated SignInDto signInDto) {
+    public ResponseSignInDto signInWithPassword(@RequestBody @Validated RequestSignInDto requestSignInDto) {
         log.info("Called signInWithPassword controller method");
-        return signInService.signIn(signInDto);
+        return signInService.signIn(requestSignInDto);
     }
 
     @Operation(
@@ -51,15 +55,15 @@ public class SignInController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Успешная авторизация",
-                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = SignInResponseDto.class))}),
+                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseSignInDto.class))}),
                     @ApiResponse(
-                            responseCode = "500",
-                            description = "Ошибка сервера",
-                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
+                            responseCode = "404",
+                            description = "Пользователь не найден",
+                            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseErrorDto.class))}),
             })
     @PostMapping("/refresh-by-token")
-    public SignInResponseDto signInWithRefreshToken(@RequestBody @Validated RefreshTokenDto RefreshTokenDto) {
+    public ResponseSignInDto signInWithRefreshToken(@RequestBody @Validated RequestRefreshTokenDto RequestRefreshTokenDto) {
         log.info("Called signInWithRefreshToken controller method");
-        return signInService.signInWithRefreshToken(RefreshTokenDto);
+        return signInService.signInWithRefreshToken(RequestRefreshTokenDto);
     }
 }

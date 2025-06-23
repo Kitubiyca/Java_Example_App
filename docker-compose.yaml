@@ -1,46 +1,111 @@
 name: example_app
 
-networks:
-
-  example-app-network:
-    name: example-app-network
-    driver: bridge
-    external: true
-
 services:
+
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/create_db.sql:/docker-entrypoint-initdb.d/create_db.sql
+
+  redis:
+    container_name: redis
+    image: redis/redis-stack:latest
+    restart: always
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+
+  mongo:
+    container_name: mongo
+    image: mongo:latest
+    restart: always
+    domainname: mongo
+    hostname: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: pass
+      MONGO_INITDB_DATABASE: example_app
+    volumes:
+      - ./mongo:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "27017:27017"
+
+  
+  eureka:
+    container_name: eureka
+    image: steeltoeoss/eureka-server:latest
+    restart: always
+    ports:
+      - "8761:8761"
+
+  kafka:
+    container_name: kafka
+    image: apache/kafka:latest
+    restart: always
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   gateway:
     container_name: gateway
     build: ./gateway
+    restart: always
+    depends_on:
+      - eureka
+      - redis
     ports:
       - "8081:8081"
-    networks:
-      - example-app-network
     environment:
       - secret.jwt.key=mQhsdTPvoyCAk3oucCcpD9K1lPYqFhQxMB5aYOYBmqBQilzIm95czMyFXiz+YgnoqnGBJiCa/aODmEBES8I+FpAcnFSMEd7o5J6CZKT+okzx/H/mhN5nQFZrDPW1r/PzeFokqIA+q+s+hu4T0J6ui+0l/i34l2exxun6uY4RFN3YTpeRDORuw5xmG94qvTE2ukAY9rx32rcMbAvWmH0EHwCkk2U6DFyqhlX+7FDx2tD3JPKGj9TtZNJlev5m0OqChPiv109YAdHSayjTTzyQYgTEf774DHHpNCb3oVkMq43RbIqBv8N0hbFUoR2akJZnbrz3JltYg1oGDrp9GugGFA==
   
   user_service:
     container_name: user_service
     build: ./user_service
+    restart: always
+    depends_on:
+      - eureka
+      - redis
+      - postgres
+      - mongo
+      - kafka
     ports:
       - "8082:8082"
-    networks:
-      - example-app-network
     environment:
       - secret.jwt.key=mQhsdTPvoyCAk3oucCcpD9K1lPYqFhQxMB5aYOYBmqBQilzIm95czMyFXiz+YgnoqnGBJiCa/aODmEBES8I+FpAcnFSMEd7o5J6CZKT+okzx/H/mhN5nQFZrDPW1r/PzeFokqIA+q+s+hu4T0J6ui+0l/i34l2exxun6uY4RFN3YTpeRDORuw5xmG94qvTE2ukAY9rx32rcMbAvWmH0EHwCkk2U6DFyqhlX+7FDx2tD3JPKGj9TtZNJlev5m0OqChPiv109YAdHSayjTTzyQYgTEf774DHHpNCb3oVkMq43RbIqBv8N0hbFUoR2akJZnbrz3JltYg1oGDrp9GugGFA==
   
   product_service:
     container_name: product_service
     build: ./product_service
+    restart: always
+    depends_on:
+      - eureka
+      - postgres
     ports:
       - "8083:8083"
-    networks:
-      - example-app-network
   
   notification_service:
     container_name: notification_service
     build: ./notification_service
+    restart: always
+    depends_on:
+      - eureka
+      - kafka
     ports:
       - "8084:8084"
-    networks:
-      - example-app-network

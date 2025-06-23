@@ -11,8 +11,8 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
-@Schema(description = "DTO с данными для регистрации нового пользователя")
-public class RequestSignUpDto {
+@Schema(description = "DTO с новыми данными пользователя")
+public class RequestUpdateUserProfileDto {
 
     @Email
     @NotBlank
@@ -20,6 +20,9 @@ public class RequestSignUpDto {
     private String email;
     @NotBlank
     @Schema(description = "Пароль", example = "1234")
+    private String oldPassword;
+    @NotBlank
+    @Schema(description = "Пароль", example = "4321")
     private String password;
     @NotBlank
     @Schema(description = "Имя", example = "Иван")

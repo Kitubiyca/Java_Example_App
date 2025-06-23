@@ -5,10 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.shop_example.user_service.dto.OTPIdResponseDto;
-import ru.shop_example.user_service.dto.EmailDto;
+import ru.shop_example.user_service.dto.ResponseOTPIdDto;
+import ru.shop_example.user_service.dto.RequestEmailDto;
 import ru.shop_example.user_service.dto.RequestSignUpDto;
-import ru.shop_example.user_service.dto.OTPDto;
+import ru.shop_example.user_service.dto.RequestOTPDto;
 import ru.shop_example.user_service.entity.OTP;
 import ru.shop_example.user_service.entity.Role;
 import ru.shop_example.user_service.entity.User;
@@ -39,7 +39,7 @@ public class SignUpServiceImpl implements SignUpService {
     private final Utils utils;
 
     @Transactional
-    public OTPIdResponseDto registerUser(RequestSignUpDto requestSignUpDto){
+    public ResponseOTPIdDto registerUser(RequestSignUpDto requestSignUpDto){
         log.info("Called registerUser service method");
         if (userRepository.existsByEmail(requestSignUpDto.getEmail())) throw new UserAlreadyExistsException("User with this email already exists.");
         if (userRepository.existsByPhoneNumber(requestSignUpDto.getPhoneNumber())) throw new UserAlreadyExistsException("User with this phone number already exists.");
@@ -51,24 +51,24 @@ public class SignUpServiceImpl implements SignUpService {
         user.setStatus(UserStatus.pending);
         user.setRole(userRole);
         userRepository.save(user);
-        return new OTPIdResponseDto(handleOTP(user).getId());
+        return new ResponseOTPIdDto(handleOTP(user).getId());
     }
 
-    public OTPIdResponseDto resendOTPWithEmail(EmailDto emailDto){
+    public ResponseOTPIdDto resendOTPWithEmail(RequestEmailDto requestEmailDto){
         log.info("Called resendOTPWithEmail service method");
-        User user = userRepository.findUserByEmail(emailDto.getEmail()).orElseThrow(() -> new UserNotFoundException(String.format("User with email %s not found", emailDto.getEmail())));
+        User user = userRepository.findUserByEmail(requestEmailDto.getEmail()).orElseThrow(() -> new UserNotFoundException(String.format("User with email %s not found", requestEmailDto.getEmail())));
         if (!user.getStatus().equals(UserStatus.pending)) throw new RequestDeniedException(String.format("User status is %s instead of %s", user.getStatus(), UserStatus.pending));
-        return new OTPIdResponseDto(handleOTP(user).getId());
+        return new ResponseOTPIdDto(handleOTP(user).getId());
     }
 
     @Transactional
-    public void confirmRegistration(OTPDto OTPDto){
+    public void confirmRegistration(RequestOTPDto RequestOTPDto){
         log.info("Called ConfirmRegistration service method");
-        OTP otp = otpRepository.getByIntentAndId(Intent.signUp, OTPDto.getId());
+        OTP otp = otpRepository.getByIntentAndId(Intent.signUp, RequestOTPDto.getId());
         if (otp == null) throw new OTPTimedOutException("Confirmation code timed out or don't exist");
         User user = userRepository.findById(otp.getUserId()).orElseThrow(() -> new UserNotFoundException("Linked user not found"));
         if (!user.getStatus().equals(UserStatus.pending)) throw new RequestDeniedException(String.format("User status is %s instead of %s", user.getStatus(), UserStatus.pending));
-        if (!otp.getValue().equals(OTPDto.getValue())) throw new OTPException("Invalid 4-digits code");
+        if (!otp.getValue().equals(RequestOTPDto.getValue())) throw new OTPException("Invalid 4-digits code");
         user.setStatus(UserStatus.active);
         userRepository.save(user);
         otpRepository.deleteByIdAndIntent(otp.getId(), otp.getIntent());

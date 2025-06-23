@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.shop_example.user_service.dto.PasswordDto;
-import ru.shop_example.user_service.dto.UpdateUserProfileDto;
-import ru.shop_example.user_service.dto.UserInfoDto;
+import ru.shop_example.user_service.dto.RequestPasswordDto;
+import ru.shop_example.user_service.dto.RequestUpdateUserProfileDto;
+import ru.shop_example.user_service.dto.ResponseUserInfoDto;
 import ru.shop_example.user_service.entity.User;
 import ru.shop_example.user_service.entity.constant.UserStatus;
 import ru.shop_example.user_service.exception.custom.AuthorizationFailedException;
@@ -28,31 +28,31 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
-    public UserInfoDto getProfile(UUID userId){
+    public ResponseUserInfoDto getProfile(UUID userId){
         return userMapper.userToUserInfoDto(userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found")));
     }
 
     @Transactional
-    public void updateProfile(UUID userID, UpdateUserProfileDto updateUserProfileDto){
+    public void updateProfile(UUID userID, RequestUpdateUserProfileDto requestUpdateUserProfileDto){
         log.info("Called updateProfile service method");
         User user = userRepository.findById(userID).orElseThrow(() -> new UserNotFoundException("User not found"));
         if (!user.getStatus().equals(UserStatus.active)) throw new RequestDeniedException(String.format("User status is %s instead of %s", user.getStatus(), UserStatus.active));
-        if (!passwordEncoder.matches(updateUserProfileDto.getOldPassword(), user.getPassword())) throw new AuthorizationFailedException("Wrong password");
-        user.setEmail(updateUserProfileDto.getEmail());
-        user.setPassword(passwordEncoder.encode(updateUserProfileDto.getPassword()));
-        user.setFirstname(updateUserProfileDto.getFirstname());
-        user.setLastname(updateUserProfileDto.getLastname());
-        user.setPatronymic(updateUserProfileDto.getPatronymic());
-        user.setBirthDate(updateUserProfileDto.getBirthDate());
-        user.setPhoneNumber(updateUserProfileDto.getPhoneNumber());
+        if (!passwordEncoder.matches(requestUpdateUserProfileDto.getOldPassword(), user.getPassword())) throw new AuthorizationFailedException("Wrong password");
+        user.setEmail(requestUpdateUserProfileDto.getEmail());
+        user.setPassword(passwordEncoder.encode(requestUpdateUserProfileDto.getPassword()));
+        user.setFirstname(requestUpdateUserProfileDto.getFirstname());
+        user.setLastname(requestUpdateUserProfileDto.getLastname());
+        user.setPatronymic(requestUpdateUserProfileDto.getPatronymic());
+        user.setBirthDate(requestUpdateUserProfileDto.getBirthDate());
+        user.setPhoneNumber(requestUpdateUserProfileDto.getPhoneNumber());
     }
 
     @Transactional
-    public void deleteProfile(UUID userID, PasswordDto passwordDto){
+    public void deleteProfile(UUID userID, RequestPasswordDto requestPasswordDto){
         log.info("Called deleteProfile service method");
         User user = userRepository.findById(userID).orElseThrow(() -> new UserNotFoundException("User not found"));
         if (!user.getStatus().equals(UserStatus.active)) throw new RequestDeniedException(String.format("User status is %s instead of %s", user.getStatus(), UserStatus.active));
-        if (!passwordEncoder.matches(passwordDto.getPassword(), user.getPassword())) throw new AuthorizationFailedException("Wrong password");
+        if (!passwordEncoder.matches(requestPasswordDto.getPassword(), user.getPassword())) throw new AuthorizationFailedException("Wrong password");
         user.setStatus(UserStatus.markedForDeletion);
     }
 }

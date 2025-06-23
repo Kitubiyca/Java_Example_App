@@ -1,6 +1,5 @@
 package ru.shop_example.gateway.exception;
 
-import jakarta.ws.rs.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,10 +39,11 @@ public class ExceptionHandlerController {
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ErrorDto> notFoundExceptionHandler(ResponseStatusException exception, ServerWebExchange exchange) {
         log.error(exception.getMessage());
+        HttpStatus httpStatus = HttpStatus.valueOf(exception.getStatusCode().value());
         return ResponseEntity.status(exception.getStatusCode()).body(
                 new ErrorDto(
-                        HttpStatus.NOT_FOUND,
-                        HttpStatus.NOT_FOUND.toString(),
+                        httpStatus,
+                        httpStatus.toString(),
                         exchange.getRequest().getURI().toString(),
                         exception.getMessage()
                 ));

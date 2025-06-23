@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Set;
 import java.util.UUID;
@@ -21,7 +22,7 @@ public class UserFavorites {
     private UUID userId;
 
     @LastModifiedDate
-    private OffsetDateTime lastChange;
+    private Instant lastChange;
 
     private Set<UUID> values;
 }

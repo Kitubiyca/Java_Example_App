@@ -8,9 +8,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.shop_example.user_service.configuration.TokenProperties;
-import ru.shop_example.user_service.dto.RefreshTokenDto;
-import ru.shop_example.user_service.dto.SignInDto;
-import ru.shop_example.user_service.dto.SignInResponseDto;
+import ru.shop_example.user_service.dto.RequestRefreshTokenDto;
+import ru.shop_example.user_service.dto.RequestSignInDto;
+import ru.shop_example.user_service.dto.ResponseSignInDto;
 import ru.shop_example.user_service.entity.User;
 import ru.shop_example.user_service.entity.constant.UserStatus;
 import ru.shop_example.user_service.exception.custom.AuthorizationFailedException;
@@ -37,22 +37,22 @@ public class SignInServiceImpl implements SignInService {
     private final TokenProperties tokenProperties;
 
     @Transactional
-    public SignInResponseDto signIn(SignInDto signInDto){
+    public ResponseSignInDto signIn(RequestSignInDto requestSignInDto){
         log.info("Called signIn service method");
-        User user = userRepository.findUserByEmail(signInDto.getEmail()).orElseThrow(() -> new UserNotFoundException(String.format("User with email %s not found", signInDto.getEmail())));
+        User user = userRepository.findUserByEmail(requestSignInDto.getEmail()).orElseThrow(() -> new UserNotFoundException(String.format("User with email %s not found", requestSignInDto.getEmail())));
         if (!user.getStatus().equals(UserStatus.active)) throw new RequestDeniedException(String.format("User status is %s instead of %s", user.getStatus(), UserStatus.active));
-        if (!passwordEncoder.matches(signInDto.getPassword(), user.getPassword())) throw new AuthorizationFailedException("Wrong password");
+        if (!passwordEncoder.matches(requestSignInDto.getPassword(), user.getPassword())) throw new AuthorizationFailedException("Wrong password");
         user.setAccessDate(OffsetDateTime.now());
         return createSessionAndPrepareResponse(user.getId(), user.getRole().getName());
     }
 
     @Transactional
-    public SignInResponseDto signInWithRefreshToken(RefreshTokenDto refreshTokenDto){
+    public ResponseSignInDto signInWithRefreshToken(RequestRefreshTokenDto requestRefreshTokenDto){
         log.info("Called signInWithRefreshToken service method");
         UUID userId;
         UUID sessionId;
         try{
-            Claims claims = jwtUtils.validateToken(refreshTokenDto.getValue());
+            Claims claims = jwtUtils.validateToken(requestRefreshTokenDto.getValue());
             sessionId = UUID.fromString((String) claims.get("sessionId"));
             userId = UUID.fromString(sessionTokenRepository.findRefreshTokenBySessionId(sessionId).split(":")[2]);
         } catch (JwtException e){
@@ -67,12 +67,12 @@ public class SignInServiceImpl implements SignInService {
         return createSessionAndPrepareResponse(user.getId(), user.getRole().getName());
     }
 
-    private SignInResponseDto createSessionAndPrepareResponse(UUID userId, String userRole){
+    private ResponseSignInDto createSessionAndPrepareResponse(UUID userId, String userRole){
         UUID sessionId = UUID.randomUUID();
         String refreshToken = jwtUtils.generateRefreshToken(sessionId, userId, userRole);
         String accessToken = jwtUtils.generateAccessToken(sessionId, userId, userRole);
         sessionTokenRepository.saveRefreshToken(userId, sessionId, refreshToken, tokenProperties.refresh().ttl());
         sessionTokenRepository.saveAccessToken(userId, sessionId, accessToken, tokenProperties.access().ttl());
-        return new SignInResponseDto(accessToken, refreshToken);
+        return new ResponseSignInDto(accessToken, refreshToken);
     }
 }
