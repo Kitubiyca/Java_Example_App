@@ -7,8 +7,7 @@ import lombok.*;
 import java.util.Set;
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "DTO с id избранных товаров")

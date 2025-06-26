@@ -5,8 +5,7 @@ import lombok.*;
 
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @Schema(description = "DTO с новым id для кода подтверждения")
 public class ResponseOTPIdDto {

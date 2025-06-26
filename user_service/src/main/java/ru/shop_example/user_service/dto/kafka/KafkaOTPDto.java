@@ -2,8 +2,7 @@ package ru.shop_example.user_service.dto.kafka;
 
 import lombok.*;
 
-@Getter
-@Setter(AccessLevel.PUBLIC)
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

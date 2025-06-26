@@ -3,8 +3,7 @@ package ru.shop_example.user_service.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @Builder
 @Schema(description = "DTO с токенами доступа пользователя")

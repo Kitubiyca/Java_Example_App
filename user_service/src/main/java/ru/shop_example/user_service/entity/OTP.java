@@ -5,8 +5,7 @@ import ru.shop_example.user_service.entity.constant.Intent;
 
 import java.util.UUID;
 
-@Getter
-@Setter(AccessLevel.PUBLIC)
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

@@ -7,8 +7,7 @@ import lombok.*;
 
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @Schema(description = "DTO содержащее одноразовый код подтверждения")
 public class RequestOTPDto {

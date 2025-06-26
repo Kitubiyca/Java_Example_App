@@ -8,7 +8,7 @@ import ru.shop_example.user_service.entity.User;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-    User requestSignUpDto(RequestSignUpDto requestSignUpDto);
+    User requestSignUpDtoToUser(RequestSignUpDto requestSignUpDto);
 
     @Mapping(source = "role.id", target = "roleId")
     ResponseUserInfoDto userToUserInfoDto(User user);

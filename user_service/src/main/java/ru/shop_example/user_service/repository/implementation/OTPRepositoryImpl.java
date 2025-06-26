@@ -9,6 +9,7 @@ import ru.shop_example.user_service.entity.redis.RedisOTP;
 import ru.shop_example.user_service.repository.OTPRepository;
 
 import java.time.Duration;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -19,9 +20,10 @@ public class OTPRepositoryImpl implements OTPRepository {
 
     private final String ID_FORMAT = "code:%s:%s";
 
-    public OTP getByIntentAndId(Intent intent, UUID id){
+    public Optional<OTP> getByIntentAndId(Intent intent, UUID id){
         RedisOTP redisOtp = OTPRedisTemplate.opsForValue().get(String.format(ID_FORMAT, intent, id));
-        return new OTP(id, redisOtp.getUserId(), intent, redisOtp.getValue());
+        if (redisOtp == null) return Optional.empty();
+        return Optional.of(new OTP(id, redisOtp.getUserId(), intent, redisOtp.getValue()));
     }
 
     public void set(OTP otp, Duration ttl){

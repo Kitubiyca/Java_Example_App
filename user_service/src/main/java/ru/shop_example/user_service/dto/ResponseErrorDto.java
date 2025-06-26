@@ -6,8 +6,7 @@ import org.springframework.http.HttpStatus;
 
 import java.time.Instant;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @Builder
 @Schema(description = "DTO содержащее ошибку")

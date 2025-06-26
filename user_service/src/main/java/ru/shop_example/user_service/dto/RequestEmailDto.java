@@ -6,8 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @Schema(description = "DTO содержащее электронную почту")
 public class RequestEmailDto {

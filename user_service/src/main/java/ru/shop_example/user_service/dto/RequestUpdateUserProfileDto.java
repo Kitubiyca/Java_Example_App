@@ -8,8 +8,9 @@ import lombok.*;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
+@Data
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "DTO с новыми данными пользователя")
 public class RequestUpdateUserProfileDto {
