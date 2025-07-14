@@ -4,7 +4,7 @@ services:
 
   postgres:
     container_name: postgres
-    image: postgres:latest
+    image: postgres:15
     restart: always
     environment:
       - POSTGRES_USER=postgres
@@ -16,7 +16,7 @@ services:
 
   redis:
     container_name: redis
-    image: redis/redis-stack:latest
+    image: redis/redis-stack:7.4.0-v6
     restart: always
     ports:
       - "6379:6379"
@@ -24,7 +24,7 @@ services:
 
   mongo:
     container_name: mongo
-    image: mongo:latest
+    image: mongo:4.4
     restart: always
     domainname: mongo
     hostname: mongo
@@ -40,14 +40,14 @@ services:
   
   eureka:
     container_name: eureka
-    image: steeltoeoss/eureka-server:latest
+    image: steeltoeoss/eureka-server:4.1.1
     restart: always
     ports:
       - "8761:8761"
 
   kafka:
     container_name: kafka
-    image: apache/kafka:latest
+    image: apache/kafka:4.0.0
     restart: always
     ports:
       - "9092:9092"

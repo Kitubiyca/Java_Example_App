@@ -8,6 +8,7 @@ import lombok.*;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Schema(description = "DTO содержащее электронную почту")
 public class RequestEmailDto {
 
