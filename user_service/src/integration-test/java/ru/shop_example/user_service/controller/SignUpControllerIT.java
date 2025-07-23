@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-public class SingUpControllerIT implements AbstractIT {
+public class SignUpControllerIT implements AbstractIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -49,7 +49,7 @@ public class SingUpControllerIT implements AbstractIT {
     private OTPRepository otpRepository;
 
     @Test
-    @DisplayName("Должен gitпроводить полную регистрацию нового пользователя")
+    @DisplayName("Должен проводить полную регистрацию нового пользователя")
     void ShouldSuccessfullySignUp() throws Exception {
 
         //Arrange
