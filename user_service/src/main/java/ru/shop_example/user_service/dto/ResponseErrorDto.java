@@ -2,7 +2,6 @@ package ru.shop_example.user_service.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import org.springframework.http.HttpStatus;
 import ru.shop_example.user_service.exception.ExceptionHandlerController;
 
 import java.time.Instant;
@@ -20,7 +19,7 @@ public class ResponseErrorDto {
 
     /** Код ошибки формата "400". */
     @Schema(description = "Код ошибки", example = "400")
-    private HttpStatus errorCode;
+    private int errorCode;
 
     /** Текстовая расшифровка ошибки формата "BAD_REQUEST". */
     @Schema(description = "Расшифровка ошибки", example = "BAD_REQUEST")

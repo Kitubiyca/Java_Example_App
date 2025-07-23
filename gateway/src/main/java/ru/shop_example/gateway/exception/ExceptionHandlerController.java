@@ -23,8 +23,8 @@ public class ExceptionHandlerController {
         log.error(exception.getMessage());
         log.error(exception.getClass().getName());
         return new ErrorDto(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                HttpStatus.INTERNAL_SERVER_ERROR.toString(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                 exchange.getRequest().getURI().toString(),
                 exception.getMessage()
         );
@@ -42,8 +42,8 @@ public class ExceptionHandlerController {
         HttpStatus httpStatus = HttpStatus.valueOf(exception.getStatusCode().value());
         return ResponseEntity.status(exception.getStatusCode()).body(
                 new ErrorDto(
-                        httpStatus,
-                        httpStatus.toString(),
+                        httpStatus.value(),
+                        httpStatus.getReasonPhrase(),
                         exchange.getRequest().getURI().toString(),
                         exception.getMessage()
                 ));
@@ -54,8 +54,8 @@ public class ExceptionHandlerController {
     public ErrorDto jwtAuthorizationFailedExceptionHandler(JWTAuthorizationFailedException exception, ServerWebExchange exchange) {
         log.error(exception.getMessage());
         return new ErrorDto(
-                HttpStatus.UNAUTHORIZED,
-                HttpStatus.UNAUTHORIZED.toString(),
+                HttpStatus.UNAUTHORIZED.value(),
+                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
                 exchange.getRequest().getURI().toString(),
                 exception.getMessage()
         );
@@ -66,8 +66,8 @@ public class ExceptionHandlerController {
     public ErrorDto userRoleCheckExceptionHandler(UserRoleCheckException exception, ServerWebExchange exchange) {
         log.error(exception.getMessage());
         return new ErrorDto(
-                HttpStatus.FORBIDDEN,
-                HttpStatus.FORBIDDEN.toString(),
+                HttpStatus.FORBIDDEN.value(),
+                HttpStatus.FORBIDDEN.getReasonPhrase(),
                 exchange.getRequest().getURI().toString(),
                 exception.getMessage()
         );

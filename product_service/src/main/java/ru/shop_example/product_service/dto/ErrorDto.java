@@ -1,7 +1,6 @@
 package ru.shop_example.product_service.dto;
 
 import lombok.*;
-import org.springframework.http.HttpStatus;
 
 import java.time.Instant;
 
@@ -13,7 +12,7 @@ import java.time.Instant;
 @ToString
 public class ErrorDto {
 
-    private HttpStatus errorCode;
+    private int errorCode;
     private String errorText;
     private String url;
     private String message;

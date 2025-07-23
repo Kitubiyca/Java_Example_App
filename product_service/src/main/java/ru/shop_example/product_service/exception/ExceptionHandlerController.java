@@ -20,8 +20,8 @@ public class ExceptionHandlerController {
     public ErrorDto serverExceptionHandler(Exception exception, HttpServletRequest request) {
         log.error(exception.getMessage());
         return new ErrorDto(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                HttpStatus.INTERNAL_SERVER_ERROR.toString(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                 request.getRequestURI(),
                 exception.getMessage());
     }
@@ -31,8 +31,8 @@ public class ExceptionHandlerController {
     public ErrorDto notFoundExceptionHandler(NotFoundException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
         return new ErrorDto(
-                HttpStatus.NOT_FOUND,
-                HttpStatus.NOT_FOUND.toString(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
                 request.getRequestURI(),
                 exception.getMessage());
     }

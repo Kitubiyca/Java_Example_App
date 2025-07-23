@@ -32,8 +32,8 @@ public class ExceptionHandlerController {
         log.error(exception.getMessage());
         exception.getStackTrace();
         return new ResponseErrorDto(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                HttpStatus.INTERNAL_SERVER_ERROR.toString(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                 request.getRequestURI(),
                 exception.getMessage());
     }
@@ -43,8 +43,8 @@ public class ExceptionHandlerController {
     public ResponseErrorDto methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
         return new ResponseErrorDto(
-                HttpStatus.BAD_REQUEST,
-                HttpStatus.BAD_REQUEST.toString(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 request.getRequestURI(),
                 exception.getMessage());
     }
@@ -54,8 +54,8 @@ public class ExceptionHandlerController {
     public ResponseErrorDto bindExceptionHandler(BindException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
         return new ResponseErrorDto(
-                HttpStatus.BAD_REQUEST,
-                HttpStatus.BAD_REQUEST.toString(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 request.getRequestURI(),
                 exception.getMessage());
     }
@@ -65,8 +65,8 @@ public class ExceptionHandlerController {
     public ResponseErrorDto userAlreadyExistsExceptionHandler(UserAlreadyExistsException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
         return new ResponseErrorDto(
-                HttpStatus.BAD_REQUEST,
-                HttpStatus.BAD_REQUEST.toString(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 request.getRequestURI(),
                 exception.getMessage());
     }
@@ -76,8 +76,8 @@ public class ExceptionHandlerController {
     public ResponseErrorDto userNotFoundExceptionHandler(UserNotFoundException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
         return new ResponseErrorDto(
-                HttpStatus.NOT_FOUND,
-                HttpStatus.NOT_FOUND.toString(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
                 request.getRequestURI(),
                 exception.getMessage());
     }
@@ -87,8 +87,8 @@ public class ExceptionHandlerController {
     public ResponseErrorDto entityNotFoundExceptionHandler(EntityNotFoundException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
         return new ResponseErrorDto(
-                HttpStatus.NOT_FOUND,
-                HttpStatus.NOT_FOUND.toString(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
                 request.getRequestURI(),
                 exception.getMessage());
     }
@@ -98,8 +98,8 @@ public class ExceptionHandlerController {
     public ResponseErrorDto requestDeniedExceptionHandler(RequestDeniedException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
         return new ResponseErrorDto(
-                HttpStatus.BAD_REQUEST,
-                HttpStatus.BAD_REQUEST.toString(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 request.getRequestURI(),
                 exception.getMessage());
     }
@@ -109,8 +109,8 @@ public class ExceptionHandlerController {
     public ResponseErrorDto OTPTimedOutExceptionHandler(OTPTimedOutException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
         return new ResponseErrorDto(
-                HttpStatus.BAD_REQUEST,
-                HttpStatus.BAD_REQUEST.toString(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 request.getRequestURI(),
                 exception.getMessage());
     }
@@ -120,8 +120,8 @@ public class ExceptionHandlerController {
     public ResponseErrorDto otpExceptionHandler(OTPException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
         return new ResponseErrorDto(
-                HttpStatus.BAD_REQUEST,
-                HttpStatus.BAD_REQUEST.toString(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 request.getRequestURI(),
                 exception.getMessage());
     }
@@ -131,8 +131,8 @@ public class ExceptionHandlerController {
     public ResponseErrorDto jwtValidationExceptionHandler(JWTValidationException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
         return new ResponseErrorDto(
-                HttpStatus.BAD_REQUEST,
-                HttpStatus.BAD_REQUEST.toString(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 request.getRequestURI(),
                 exception.getMessage());
     }
@@ -142,8 +142,8 @@ public class ExceptionHandlerController {
     public ResponseErrorDto authorizationFailedExceptionHandler(AuthorizationFailedException exception, HttpServletRequest request) {
         log.error(exception.getMessage());
         return new ResponseErrorDto(
-                HttpStatus.UNAUTHORIZED,
-                HttpStatus.UNAUTHORIZED.toString(),
+                HttpStatus.UNAUTHORIZED.value(),
+                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
                 request.getRequestURI(),
                 exception.getMessage());
     }
