@@ -16,9 +16,16 @@ import ru.shop_example.user_service.exception.custom.UserNotFoundException;
 import ru.shop_example.user_service.mapper.UserMapper;
 import ru.shop_example.user_service.repository.UserRepository;
 import ru.shop_example.user_service.service.UserService;
+import ru.shop_example.user_service.controller.UserController;
 
 import java.util.UUID;
 
+/**
+ * Реализация сервиса для работы с доменной сущностью пользователя.
+ *
+ * @see User
+ * @see UserController
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -28,10 +35,16 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
+    /**
+     * {@inheritDoc}
+     */
     public ResponseUserInfoDto getProfile(UUID userId){
         return userMapper.userToUserInfoDto(userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found")));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Transactional
     public void updateProfile(UUID userID, RequestUpdateUserProfileDto requestUpdateUserProfileDto){
         log.info("Called updateProfile service method");
@@ -47,6 +60,9 @@ public class UserServiceImpl implements UserService {
         user.setPhoneNumber(requestUpdateUserProfileDto.getPhoneNumber());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Transactional
     public void deleteProfile(UUID userID, RequestPasswordDto requestPasswordDto){
         log.info("Called deleteProfile service method");

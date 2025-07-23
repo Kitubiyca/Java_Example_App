@@ -15,6 +15,9 @@ import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Конфигурация OpenApi.
+ */
 @Configuration
 @OpenAPIDefinition(
         info = @Info(
@@ -34,6 +37,11 @@ import org.springframework.context.annotation.Configuration;
 )
 public class OpenApiConfiguration {
 
+    /**
+     * Устанавливает на все эндпоинты стандартные ответы 500 и 400, чтобы не рпописывать их везде вручную.
+     *
+     * @return кастомизатор OpenApi документа
+     */
     @Bean
     public OpenApiCustomizer addGlobalResponses() {
         return openApi -> {
@@ -54,6 +62,11 @@ public class OpenApiConfiguration {
         };
     }
 
+    /**
+     * Делает хэдер user-id необязательным в запросах через swagger ui, так как его проставляет гейтвей.
+     *
+     * @return кастомизатор операции на uri
+     */
     @Bean
     public OperationCustomizer removeUserIdHeader() {
         return (operation, handlerMethod) -> {

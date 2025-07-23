@@ -5,11 +5,15 @@ import lombok.*;
 
 import java.util.UUID;
 
+/**
+ * Исходящее дто с id для связки с кодом подтверждения.
+ */
 @Data
 @AllArgsConstructor
 @Schema(description = "DTO с новым id для кода подтверждения")
 public class ResponseOTPIdDto {
 
+    /** Id. */
     @Schema(description = "Значение UUID", example = "323e33e1-18f1-4bdf-b6b7-42db966c2229")
     private UUID value;
 }

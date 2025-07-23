@@ -12,6 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.shop_example.user_service.dto.*;
 import ru.shop_example.user_service.service.SignUpService;
 
+/**
+ * Контроллер, отвечающий за регистрацию новых пользователей.
+ *
+ * @see SignUpService
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("sign-up")
@@ -20,6 +25,13 @@ public class SignUpController {
 
     private final SignUpService signUpService;
 
+    /**
+     * Запрос на регистрацию нового пользователя.
+     *
+     * @param requestSignUpDto дто с данными пользователя
+     *
+     * @return дто с id для связки с кодом подтверждения
+     */
     @Operation(
             summary = "Регистрация нового аккаунта",
             description = "Начинает процесс регистрации нового пользователя",
@@ -35,6 +47,13 @@ public class SignUpController {
         return signUpService.registerUser(requestSignUpDto);
     }
 
+    /**
+     * Запрос на повторение кода подтверждения.
+     *
+     * @param requestEmailDto дто с электронной почтой
+     *
+     * @return дто с id для связки с кодом подтверждения
+     */
     @Operation(
             summary = "Повторение кода подтверждения",
             description = "Повторяет отправку кода подтверждения для регистрации",
@@ -54,6 +73,11 @@ public class SignUpController {
         return signUpService.resendOTPWithEmail(requestEmailDto);
     }
 
+    /**
+     * Завершение регистрации с помощью кода подтверждения.
+     *
+     * @param RequestOTPDto дто со связкой id + код подтверждения
+     */
     @Operation(
             summary = "Подтверждение регистрации",
             description = "Завершает процесс регистрации",

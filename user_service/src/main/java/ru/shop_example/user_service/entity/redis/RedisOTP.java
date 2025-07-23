@@ -4,6 +4,9 @@ import lombok.*;
 
 import java.util.UUID;
 
+/**
+ * Код подтверждения, хранящийся в редисе.
+ */
 @Getter
 @Setter(AccessLevel.PUBLIC)
 @AllArgsConstructor
@@ -12,6 +15,9 @@ import java.util.UUID;
 @ToString
 public class RedisOTP {
 
+    /** Id пользователя. */
     private UUID userId;
+
+    /** Код подтверждения. */
     private String value;
 }

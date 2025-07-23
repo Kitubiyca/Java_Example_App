@@ -5,15 +5,21 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+/**
+ * Входящее дто с электронной почто и паролем для авторизации.
+ */
 @Data
 @NoArgsConstructor
 @Schema(description = "DTO с данными для входа в аккаунт")
 public class RequestSignInDto {
 
+    /** Электронная почта. */
     @Email
     @NotBlank
     @Schema(description = "Электронная почта", example = "example@example.com")
     private String email;
+
+    /** Пароль. */
     @NotBlank
     @Schema(description = "Пароль", example = "1234")
     private String password;

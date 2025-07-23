@@ -14,6 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.shop_example.user_service.dto.ResponseErrorDto;
 import ru.shop_example.user_service.exception.custom.*;
 
+/**
+ * Глобальный обработчик ошибок.
+ * Возвращает в теле ответа JSON с информацией об ошибке.
+ *
+ * @see ResponseErrorDto
+ */
 @ControllerAdvice
 @Slf4j
 @RestController

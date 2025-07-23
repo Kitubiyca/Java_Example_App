@@ -20,11 +20,17 @@ import ru.shop_example.user_service.repository.SessionTokenRepository;
 import ru.shop_example.user_service.repository.UserRepository;
 import ru.shop_example.user_service.service.SignInService;
 import ru.shop_example.user_service.util.JwtUtils;
+import ru.shop_example.user_service.controller.SignInController;
 
 import java.time.OffsetDateTime;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+/**
+ * Реализация сервиса для обработки авторизации пользователя в приложении.
+ *
+ * @see SignInController
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -36,6 +42,9 @@ public class SignInServiceImpl implements SignInService {
     private final JwtUtils jwtUtils;
     private final TokenProperties tokenProperties;
 
+    /**
+     * {@inheritDoc}
+     */
     @Transactional
     public ResponseSignInDto signIn(RequestSignInDto requestSignInDto){
         log.info("Called signIn service method");
@@ -46,6 +55,9 @@ public class SignInServiceImpl implements SignInService {
         return createSessionAndPrepareResponse(user.getId(), user.getRole().getName());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Transactional
     public ResponseSignInDto signInWithRefreshToken(RequestRefreshTokenDto requestRefreshTokenDto){
         log.info("Called signInWithRefreshToken service method");
@@ -67,6 +79,14 @@ public class SignInServiceImpl implements SignInService {
         return createSessionAndPrepareResponse(user.getId(), user.getRole().getName());
     }
 
+    /**
+     * Метод с общей логикой для работы с дто ответа.
+     *
+     * @param userId id пользователя
+     * @param userRole роль пользователя
+     *
+     * @return дто ответа с access и refresh токенами для авторизации
+     */
     private ResponseSignInDto createSessionAndPrepareResponse(UUID userId, String userRole){
         UUID sessionId = UUID.randomUUID();
         String refreshToken = jwtUtils.generateRefreshToken(sessionId, userId, userRole);

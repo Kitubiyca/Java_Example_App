@@ -14,6 +14,11 @@ import ru.shop_example.user_service.service.UserSessionService;
 
 import java.util.UUID;
 
+/**
+ * Контроллер, отвечающий за упраление сессиями пользователя.
+ *
+ * @see UserSessionService
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("session")
@@ -22,6 +27,11 @@ public class UserSessionController {
 
     private final UserSessionService userSessionService;
 
+    /**
+     * Завершение текущей сессии.
+     *
+     * @param sessionId id сессии в хэдере (подставляется гейтвеем)
+     */
     @Operation(
             summary = "Завершение текущей сессии",
             description = "Завершает текущую сессии и обнуляет доступ для связанных токенов",
@@ -39,6 +49,11 @@ public class UserSessionController {
         userSessionService.terminateCurrentSessionBySessionId(sessionId);
     }
 
+    /**
+     * Завершение всех сессий пользователя.
+     *
+     * @param userId UUID пользователя в хэдере (подставляется гейтвеем)
+     */
     @Operation(
             summary = "Завершение всех сессий пользователя",
             description = "Завершает все сессии и обнуляет доступ для связанных токенов",

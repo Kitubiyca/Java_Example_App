@@ -4,6 +4,11 @@ import org.mapstruct.Mapper;
 import ru.shop_example.user_service.dto.ResponseUserFavoritesDto;
 import ru.shop_example.user_service.entity.UserFavorites;
 
+/**
+ * Маппер списка избранного пользователя.
+ *
+ * @see UserFavorites
+ */
 @Mapper(componentModel = "spring")
 public interface UserFavoritesMapper {
 

@@ -10,6 +10,9 @@ import java.time.OffsetDateTime;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Список избранного пользователя в Монго.
+ */
 @Setter
 @Getter
 @AllArgsConstructor
@@ -18,11 +21,14 @@ import java.util.UUID;
 @Document(collection = "user_favorites")
 public class UserFavorites {
 
+    /** Id пользователя. */
     @Id
     private UUID userId;
 
+    /** Время последнего изменения. */
     @LastModifiedDate
     private Instant lastChange;
 
+    /** Избранные товары. */
     private Set<UUID> values;
 }

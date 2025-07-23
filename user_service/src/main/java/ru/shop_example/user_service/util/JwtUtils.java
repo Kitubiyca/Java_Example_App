@@ -14,6 +14,13 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.UUID;
 
+/**
+ * Утилиты для работы с JWT токенами.
+ * Использует jjwt.
+ * Подтягивает настройки для jwt и секретный ключ из конфигурации.
+ *
+ * @see TokenProperties
+ */
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -23,6 +30,15 @@ public class JwtUtils {
     private String secretKey;
     private final TokenProperties tokenProperties;
 
+    /**
+     * Создание access токена.
+     *
+     * @param sessionId id сессии
+     * @param userId id пользователя
+     * @param userRole роль пользователя
+     *
+     * @return строку с access токеном
+     */
     public String generateAccessToken(UUID sessionId, UUID userId, String userRole){
         log.info("Called generateAccessToken utils method");
         return Jwts.builder()
@@ -36,6 +52,15 @@ public class JwtUtils {
                 .compact();
     }
 
+    /**
+     * Создание refresh токена.
+     *
+     * @param sessionId id сессии
+     * @param userId id пользователя
+     * @param userRole роль пользователя
+     *
+     * @return строку с refresh токеном
+     */
     public String generateRefreshToken(UUID sessionId, UUID userId, String userRole){
         log.info("Called generateRefreshToken utils method");
         return Jwts.builder()
@@ -49,6 +74,13 @@ public class JwtUtils {
                 .compact();
     }
 
+    /**
+     * Валидация токена.
+     *
+     * @param token строка с токеном
+     *
+     * @return Claims этого токена
+     */
     public Claims validateToken(String token){
         log.info("Called validateToken utils method");
         return Jwts.parser()
@@ -58,6 +90,13 @@ public class JwtUtils {
                 .getPayload();
     }
 
+    /**
+     * Простой метод для использования секретного ключа.
+     *
+     * @param key строка с ключом
+     *
+     * @return секретный ключ в виде объекта
+     */
     private SecretKey useSecretKey(String key) {return Keys.hmacShaKeyFor(Decoders.BASE64.decode(key));}
 
 }

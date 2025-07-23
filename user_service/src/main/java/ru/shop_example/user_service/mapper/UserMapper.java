@@ -6,10 +6,20 @@ import ru.shop_example.user_service.dto.RequestSignUpDto;
 import ru.shop_example.user_service.dto.ResponseUserInfoDto;
 import ru.shop_example.user_service.entity.User;
 
+/**
+ * Маппер для доменной сущности пользователя.
+ *
+ * @see User
+ */
 @Mapper(componentModel = "spring")
 public interface UserMapper {
+
     User requestSignUpDtoToUser(RequestSignUpDto requestSignUpDto);
 
+    /**
+     * Маппит {@link User User} в {@link ResponseUserInfoDto ResponseUserInfoDto}.
+     * Вместо записи полной сущности роли, записывает только её Id.
+     */
     @Mapping(source = "role.id", target = "roleId")
     ResponseUserInfoDto userToUserInfoDto(User user);
 }

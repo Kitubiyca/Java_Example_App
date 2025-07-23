@@ -12,9 +12,15 @@ import org.springframework.web.bind.annotation.*;
 import ru.shop_example.user_service.dto.ResponseErrorDto;
 import ru.shop_example.user_service.dto.ResponseUserFavoritesDto;
 import ru.shop_example.user_service.service.UserFavoritesService;
+import ru.shop_example.user_service.entity.UserFavorites;
 
 import java.util.UUID;
 
+/**
+ * Контроллер, отвечающий за взаимодействие с сущностью {@link UserFavorites UserFavorites}.
+ *
+ * @see UserFavoritesService
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("favorites")
@@ -23,7 +29,13 @@ public class UserFavoritesController {
 
     private final UserFavoritesService userFavoritesService;
 
-
+    /**
+     * Получение списка избранного пользователя.
+     *
+     * @param userId UUID пользователя в хэдере (подставляется гейтвеем)
+     *
+     * @return дто с избранными товарами
+     */
     @Operation(
             summary = "Получение списка избранного пользователя",
             description = "Возвращает DTO с данными о пользователе",
@@ -40,6 +52,12 @@ public class UserFavoritesController {
         return userFavoritesService.get(userId);
     }
 
+    /**
+     * Добавление продукта в список избранного.
+     *
+     * @param userId UUID пользователя в хэдере (подставляется гейтвеем)
+     * @param productId id продукта для добавления
+     */
     @Operation(
             summary = "Добавление продукта в список избранного",
             description = "Добавляет указанный продукт в список избранного текущего пользователя",
@@ -60,6 +78,12 @@ public class UserFavoritesController {
         userFavoritesService.add(userId, productId);
     }
 
+    /**
+     * Удаление продукта из списка избранного.
+     *
+     * @param userId UUID пользователя в хэдере (подставляется гейтвеем)
+     * @param productId id продукта для удаления
+     */
     @Operation(
             summary = "Удаление продукта из списка избранного",
             description = "Удаляет указанный продукт из списка избранного текущего пользователя",
@@ -76,6 +100,11 @@ public class UserFavoritesController {
         userFavoritesService.remove(userId, productId);
     }
 
+    /**
+     * Очищает список избранного.
+     *
+     * @param userId UUID пользователя в хэдере (подставляется гейтвеем)
+     */
     @Operation(
             summary = "Очищает список избранного",
             description = "Удаляет все продукта из списка избранного текущего пользователя",

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.shop_example.user_service.controller.SignUpController;
 import ru.shop_example.user_service.dto.ResponseOTPIdDto;
 import ru.shop_example.user_service.dto.RequestEmailDto;
 import ru.shop_example.user_service.dto.RequestSignUpDto;
@@ -28,6 +29,11 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * Реализацию сервиса для обработки регистрации пользователя в приложении.
+ *
+ * @see SignUpController
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -41,6 +47,9 @@ public class SignUpServiceImpl implements SignUpService {
     private final UserMapper userMapper;
     private final OTPUtils OTPUtils;
 
+    /**
+     * {@inheritDoc}
+     */
     @Transactional
     public ResponseOTPIdDto registerUser(RequestSignUpDto requestSignUpDto){
         log.info("Called registerUser service method");
@@ -57,6 +66,9 @@ public class SignUpServiceImpl implements SignUpService {
         return new ResponseOTPIdDto(handleOTP(user).getId());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ResponseOTPIdDto resendOTPWithEmail(RequestEmailDto requestEmailDto){
         log.info("Called resendOTPWithEmail service method");
         User user = userRepository.findUserByEmail(requestEmailDto.getEmail()).orElseThrow(() -> new UserNotFoundException(String.format("User with email %s not found", requestEmailDto.getEmail())));
@@ -64,6 +76,9 @@ public class SignUpServiceImpl implements SignUpService {
         return new ResponseOTPIdDto(handleOTP(user).getId());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Transactional
     public void confirmRegistration(RequestOTPDto RequestOTPDto){
         log.info("Called ConfirmRegistration service method");
@@ -76,6 +91,13 @@ public class SignUpServiceImpl implements SignUpService {
         otpRepository.deleteByIdAndIntent(otp.getId(), otp.getIntent());
     }
 
+    /**
+     * Метод с общей логикой для работы с дто ответа.
+     *
+     * @param user пользователь
+     *
+     * @return временный код подтверждения
+     */
     private OTP handleOTP(User user){
         OTP otp = OTPUtils.createOTP(user.getId(), Intent.signUp);
         otpRepository.set(otp, Duration.of(5, ChronoUnit.MINUTES));

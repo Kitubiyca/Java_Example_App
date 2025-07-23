@@ -4,11 +4,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+/**
+ * Входящее дто с refresh токеном.
+ */
 @Data
 @NoArgsConstructor
 @Schema(description = "DTO содержащее refresh токен пользователя")
 public class RequestRefreshTokenDto {
 
+    /** Refresh токен. */
     @NotBlank
     @Schema(description = "Токен", example = "{token here}")
     private String value;

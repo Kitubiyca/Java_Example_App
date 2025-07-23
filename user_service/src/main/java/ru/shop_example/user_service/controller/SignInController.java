@@ -17,6 +17,11 @@ import ru.shop_example.user_service.dto.RequestSignInDto;
 import ru.shop_example.user_service.dto.ResponseSignInDto;
 import ru.shop_example.user_service.service.SignInService;
 
+/**
+ * Контроллер, отвечающий за авторизацию пользователей.
+ *
+ * @see SignInService
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("sign-in")
@@ -25,6 +30,13 @@ public class SignInController {
 
     private final SignInService signInService;
 
+    /**
+     * Вход в аккаунт с паролем.
+     *
+     * @param requestSignInDto дто с паролем и электронной почтой
+     *
+     * @return дто с access и refresh токенами
+     */
     @Operation(
             summary = "Вход в аккаунт с паролем",
             description = "Возвращает DTO с данными для доступа к остальной части API",
@@ -48,6 +60,14 @@ public class SignInController {
         return signInService.signIn(requestSignInDto);
     }
 
+    /**
+     * Вход в аккаунт с через refresh токен.
+     * Должно использоваться автоматически фронтендом для продления сессии по окончанию TTL access токена.
+     *
+     * @param RequestRefreshTokenDto дто с refresh токеном
+     *
+     * @return дто с access и refresh токенами (новыми)
+     */
     @Operation(
             summary = "Вход в аккаунт через токен",
             description = "Возвращает DTO с данными для доступа к остальной части API",

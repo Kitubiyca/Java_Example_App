@@ -5,13 +5,16 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-
+/**
+ * Входящее дто с электронной почтой.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "DTO содержащее электронную почту")
 public class RequestEmailDto {
 
+    /** Электронная почта. */
     @Email
     @NotBlank
     @Schema(description = "Электронная почта", example = "example@example.com")

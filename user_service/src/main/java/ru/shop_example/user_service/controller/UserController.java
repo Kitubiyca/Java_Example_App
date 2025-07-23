@@ -13,9 +13,15 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.shop_example.user_service.dto.*;
 import ru.shop_example.user_service.service.UserService;
+import ru.shop_example.user_service.entity.User;
 
 import java.util.UUID;
 
+/**
+ * Контроллер, отвечающий за взаимодействие с сущностью {@link User User}.
+ *
+ * @see UserService
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("user")
@@ -24,6 +30,13 @@ public class UserController {
 
     private final UserService userService;
 
+    /**
+     * Получение информации о пользователе.
+     *
+     * @param userId UUID пользователя в хэдере (подставляется гейтвеем)
+     *
+     * @return дто с информацией о пользователе
+     */
     @Operation(
             summary = "Получение информации о профиле пользователя",
             description = "Возвращает DTO с данными о пользователе",
@@ -44,6 +57,12 @@ public class UserController {
         return userService.getProfile(userId);
     }
 
+    /**
+     * Обновление информации о пользователе.
+     *
+     * @param userId UUID пользователя в хэдере (подставляется гейтвеем)
+     * @param requestUpdateUserProfileDto дто с новой информацией о пользователе
+     */
     @Operation(
             summary = "Обновление данных профиля пользователя",
             description = "Обновляет данные профиля пользователя в БД",
@@ -68,6 +87,12 @@ public class UserController {
         userService.updateProfile(userId, requestUpdateUserProfileDto);
     }
 
+    /**
+     * Удаление профиля пользователя.
+     *
+     * @param userId UUID пользователя в хэдере (подставляется гейтвеем)
+     * @param requestPasswordDto дто с паролем пользователя
+     */
     @Operation(
             summary = "Удаление профиля пользователя",
             description = "Удаляеь данные о профиле пользователя",
