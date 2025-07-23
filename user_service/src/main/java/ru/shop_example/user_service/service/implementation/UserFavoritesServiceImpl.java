@@ -43,7 +43,7 @@ public class UserFavoritesServiceImpl implements UserFavoritesService {
     @Override
     public void add(UUID userId, UUID productId) {
         log.info("Called UserFavoritesService.add service method");
-        if (!productClient.isProductExist(productId).getValue()) throw new EntityNotFoundException("Product " + productId + " not found.");
+        if (!productClient.isProductExist(productId).getBooleanValue()) throw new EntityNotFoundException("Product " + productId + " not found.");
         userFavoritesRepository.add(userId, productId);
     }
 

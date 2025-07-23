@@ -155,12 +155,12 @@ public class SignInServiceImplTest {
 
         //Arrange
         RequestRefreshTokenDto requestRefreshTokenDto = new RequestRefreshTokenDto();
-        requestRefreshTokenDto.setValue("token");
+        requestRefreshTokenDto.setRefreshToken("token");
         User user = createActiveUser();
         ResponseSignInDto expected = createResponseSignInDto();
         UUID sessionId = UUID.randomUUID();
 
-        when(jwtUtils.validateToken(requestRefreshTokenDto.getValue())).thenReturn(mockClaims);
+        when(jwtUtils.validateToken(requestRefreshTokenDto.getRefreshToken())).thenReturn(mockClaims);
         when(mockClaims.get("sessionId")).thenReturn(sessionId.toString());
         when(sessionTokenRepository.findRefreshTokenBySessionId(sessionId)).thenReturn(String.format("token:refresh:%s:%s", user.getId(), sessionId));
 
@@ -191,9 +191,9 @@ public class SignInServiceImplTest {
 
         //Arrange
         RequestRefreshTokenDto requestRefreshTokenDto = new RequestRefreshTokenDto();
-        requestRefreshTokenDto.setValue("token");
+        requestRefreshTokenDto.setRefreshToken("token");
 
-        when(jwtUtils.validateToken(requestRefreshTokenDto.getValue())).thenThrow(new JwtException("error"));
+        when(jwtUtils.validateToken(requestRefreshTokenDto.getRefreshToken())).thenThrow(new JwtException("error"));
 
         //Act
         AuthorizationFailedException actual = assertThrows(
@@ -210,10 +210,10 @@ public class SignInServiceImplTest {
 
         //Arrange
         RequestRefreshTokenDto requestRefreshTokenDto = new RequestRefreshTokenDto();
-        requestRefreshTokenDto.setValue("token");
+        requestRefreshTokenDto.setRefreshToken("token");
         UUID sessionId = UUID.randomUUID();
 
-        when(jwtUtils.validateToken(requestRefreshTokenDto.getValue())).thenReturn(mockClaims);
+        when(jwtUtils.validateToken(requestRefreshTokenDto.getRefreshToken())).thenReturn(mockClaims);
         when(mockClaims.get("sessionId")).thenReturn(sessionId.toString());
         when(sessionTokenRepository.findRefreshTokenBySessionId(sessionId)).thenThrow(new NoSuchElementException("error"));
 
@@ -232,11 +232,11 @@ public class SignInServiceImplTest {
 
         //Arrange
         RequestRefreshTokenDto requestRefreshTokenDto = new RequestRefreshTokenDto();
-        requestRefreshTokenDto.setValue("token");
+        requestRefreshTokenDto.setRefreshToken("token");
         User user = createActiveUser();
         UUID sessionId = UUID.randomUUID();
 
-        when(jwtUtils.validateToken(requestRefreshTokenDto.getValue())).thenReturn(mockClaims);
+        when(jwtUtils.validateToken(requestRefreshTokenDto.getRefreshToken())).thenReturn(mockClaims);
         when(mockClaims.get("sessionId")).thenReturn(sessionId.toString());
 
         when(sessionTokenRepository.findRefreshTokenBySessionId(sessionId)).thenReturn(String.format("token:refresh:%s:%s", user.getId(), sessionId));
@@ -258,12 +258,12 @@ public class SignInServiceImplTest {
 
         //Arrange
         RequestRefreshTokenDto requestRefreshTokenDto = new RequestRefreshTokenDto();
-        requestRefreshTokenDto.setValue("token");
+        requestRefreshTokenDto.setRefreshToken("token");
         User user = createActiveUser();
         user.setStatus(UserStatus.suspended);
         UUID sessionId = UUID.randomUUID();
 
-        when(jwtUtils.validateToken(requestRefreshTokenDto.getValue())).thenReturn(mockClaims);
+        when(jwtUtils.validateToken(requestRefreshTokenDto.getRefreshToken())).thenReturn(mockClaims);
         when(mockClaims.get("sessionId")).thenReturn(sessionId.toString());
 
         when(sessionTokenRepository.findRefreshTokenBySessionId(sessionId)).thenReturn(String.format("token:refresh:%s:%s", user.getId(), sessionId));

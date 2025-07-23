@@ -64,7 +64,7 @@ public class SignInServiceImpl implements SignInService {
         UUID userId;
         UUID sessionId;
         try{
-            Claims claims = jwtUtils.validateToken(requestRefreshTokenDto.getValue());
+            Claims claims = jwtUtils.validateToken(requestRefreshTokenDto.getRefreshToken());
             sessionId = UUID.fromString((String) claims.get("sessionId"));
             userId = UUID.fromString(sessionTokenRepository.findRefreshTokenBySessionId(sessionId).split(":")[2]);
         } catch (JwtException e){

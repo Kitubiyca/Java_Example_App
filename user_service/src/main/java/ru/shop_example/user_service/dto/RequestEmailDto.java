@@ -15,8 +15,8 @@ import lombok.*;
 public class RequestEmailDto {
 
     /** Электронная почта. */
-    @Email
-    @NotBlank
+    @Email(message = "email must follow email pattern")
+    @NotBlank(message = "email must be not null or blank")
     @Schema(description = "Электронная почта", example = "example@example.com")
     private String email;
 }

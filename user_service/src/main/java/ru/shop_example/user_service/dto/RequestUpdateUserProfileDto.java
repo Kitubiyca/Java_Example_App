@@ -19,43 +19,43 @@ import java.time.LocalDate;
 public class RequestUpdateUserProfileDto {
 
     /** Электронная почта. */
-    @Email
-    @NotBlank
+    @Email(message = "email must follow email pattern")
+    @NotBlank(message = "email must be not null or blank")
     @Schema(description = "Электронная почта", example = "example@example.com")
     private String email;
 
     /** Старый пароль (для подтверждения). */
-    @NotBlank
+    @NotBlank(message = "oldPassword must be not null or blank")
     @Schema(description = "Пароль", example = "1234")
     private String oldPassword;
 
     /** Новый пароль (может совпадать со старым). */
-    @NotBlank
+    @NotBlank(message = "password must be not null or blank")
     @Schema(description = "Пароль", example = "4321")
     private String password;
 
     /** Имя. */
-    @NotBlank
+    @NotBlank(message = "firstname must be not null or blank")
     @Schema(description = "Имя", example = "Иван")
     private String firstname;
 
     /** Фамилия. */
-    @NotBlank
+    @NotBlank(message = "lastname must be not null or blank")
     @Schema(description = "Фамилия", example = "Иванов")
     private String lastname;
 
     /** Отчество. */
-    @NotBlank
+    @NotBlank(message = "patronymic must be not null or blank")
     @Schema(description = "Отчество", example = "Иванович")
     private String patronymic;
 
     /** номер телефона. */
-    @NotBlank
+    @NotBlank(message = "phone number must be not null or blank")
     @Schema(description = "Номер телефона", example = "123456789012")
     private String phoneNumber;
 
     /** Дата рождения формата 1990-01-01. */
-    @NotNull
+    @NotNull(message = "birthdate must be not null")
     @Schema(description = "Дата рождения", example = "1990-01-01")
     private LocalDate birthDate;
 }

@@ -14,7 +14,7 @@ import lombok.*;
 public class RequestPasswordDto {
 
     /** Пароль пользователя. */
-    @NotBlank
+    @NotBlank(message = "password must be not null or blank")
     @Schema(description = "Пароль", example = "1234")
     public String password;
 }

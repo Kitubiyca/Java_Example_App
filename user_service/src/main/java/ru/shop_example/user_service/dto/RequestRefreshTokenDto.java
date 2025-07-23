@@ -13,7 +13,7 @@ import lombok.*;
 public class RequestRefreshTokenDto {
 
     /** Refresh токен. */
-    @NotBlank
+    @NotBlank(message = "refreshToken must be not null or blank")
     @Schema(description = "Токен", example = "{token here}")
-    private String value;
+    private String refreshToken;
 }

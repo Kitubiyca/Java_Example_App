@@ -219,7 +219,7 @@ public class SignUpServiceImplTest {
 
         RequestOTPDto requestOTPDto = new RequestOTPDto();
         requestOTPDto.setId(UUID.randomUUID());
-        requestOTPDto.setValue(otp.getValue());
+        requestOTPDto.setOTP(otp.getValue());
 
         when(otpRepository.getByIntentAndId(Intent.signUp, requestOTPDto.getId())).thenReturn(Optional.of(otp));
         when(userRepository.findById(otp.getUserId())).thenReturn(Optional.of(user));
@@ -243,7 +243,7 @@ public class SignUpServiceImplTest {
 
         RequestOTPDto requestOTPDto = new RequestOTPDto();
         requestOTPDto.setId(UUID.randomUUID());
-        requestOTPDto.setValue(otp.getValue());
+        requestOTPDto.setOTP(otp.getValue());
 
         when(otpRepository.getByIntentAndId(Intent.signUp, requestOTPDto.getId())).thenReturn(Optional.empty());
 
@@ -266,7 +266,7 @@ public class SignUpServiceImplTest {
 
         RequestOTPDto requestOTPDto = new RequestOTPDto();
         requestOTPDto.setId(UUID.randomUUID());
-        requestOTPDto.setValue(otp.getValue());
+        requestOTPDto.setOTP(otp.getValue());
 
         when(otpRepository.getByIntentAndId(Intent.signUp, requestOTPDto.getId())).thenReturn(Optional.of(otp));
         when(userRepository.findById(otp.getUserId())).thenReturn(Optional.empty());
@@ -291,7 +291,7 @@ public class SignUpServiceImplTest {
 
         RequestOTPDto requestOTPDto = new RequestOTPDto();
         requestOTPDto.setId(UUID.randomUUID());
-        requestOTPDto.setValue(otp.getValue());
+        requestOTPDto.setOTP(otp.getValue());
 
         when(otpRepository.getByIntentAndId(Intent.signUp, requestOTPDto.getId())).thenReturn(Optional.of(otp));
         when(userRepository.findById(otp.getUserId())).thenReturn(Optional.of(user));
@@ -315,7 +315,7 @@ public class SignUpServiceImplTest {
 
         RequestOTPDto requestOTPDto = new RequestOTPDto();
         requestOTPDto.setId(UUID.randomUUID());
-        requestOTPDto.setValue("9999");
+        requestOTPDto.setOTP("9999");
 
         when(otpRepository.getByIntentAndId(Intent.signUp, requestOTPDto.getId())).thenReturn(Optional.of(otp));
         when(userRepository.findById(otp.getUserId())).thenReturn(Optional.of(user));

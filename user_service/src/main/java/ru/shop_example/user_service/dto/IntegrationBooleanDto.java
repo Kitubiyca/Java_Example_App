@@ -15,6 +15,6 @@ public class IntegrationBooleanDto {
 
     /** Булево значение. */
     @Schema(description = "Логическое начение", example = "true")
-    @NotNull
-    private Boolean value;
+    @NotNull(message = "booleanValue must not be null")
+    private Boolean booleanValue;
 }

@@ -17,13 +17,13 @@ import java.util.UUID;
 public class RequestOTPDto {
 
     /** Id кода подтверждения */
-    @NotNull
+    @NotNull(message = "id must not be null")
     @Schema(description = "Идентификатор пользователя", example = "323e33e1-18f1-4bdf-b6b7-42db966c2229")
     private UUID id;
     /** Код подтверждения 4 символа. */
 
-    @NotBlank
-    @Size(min = 4, max = 4)
+    @NotBlank(message = "OTP must be not null or blank")
+    @Size(min = 4, max = 4, message = "value must be 4 digits long")
     @Schema(description = "Код подтверждения", example = "0000")
-    private String value;
+    private String OTP;
 }

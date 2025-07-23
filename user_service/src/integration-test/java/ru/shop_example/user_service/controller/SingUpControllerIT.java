@@ -49,7 +49,7 @@ public class SingUpControllerIT implements AbstractIT {
     private OTPRepository otpRepository;
 
     @Test
-    @DisplayName("Должен проводить полную регистрацию нового пользователя")
+    @DisplayName("Должен gitпроводить полную регистрацию нового пользователя")
     void ShouldSuccessfullySignUp() throws Exception {
 
         //Arrange
@@ -86,8 +86,8 @@ public class SingUpControllerIT implements AbstractIT {
         KafkaOTPDto kafkaOTPDto = consumerRecordList.get(consumerRecordList.size() - 1).value();
 
         RequestOTPDto requestOTPDto = new RequestOTPDto();
-        requestOTPDto.setId(responseOTPIdDtoSecond.getValue());
-        requestOTPDto.setValue(kafkaOTPDto.getCode());
+        requestOTPDto.setId(responseOTPIdDtoSecond.getOTPId());
+        requestOTPDto.setOTP(kafkaOTPDto.getCode());
 
         mockMvc.perform(post("/sign-up/confirm")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -96,7 +96,7 @@ public class SingUpControllerIT implements AbstractIT {
 
         //Verify
         //Check redis
-        assertThat(otpRepository.getByIntentAndId(Intent.signUp, responseOTPIdDtoSecond.getValue())).isEmpty();
+        assertThat(otpRepository.getByIntentAndId(Intent.signUp, responseOTPIdDtoSecond.getOTPId())).isEmpty();
 
         //check postgres
         Optional<User> user = userRepository.findUserByEmail(requestSignUpDto.getEmail());

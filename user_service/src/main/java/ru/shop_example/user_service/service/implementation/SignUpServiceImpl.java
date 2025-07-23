@@ -85,7 +85,7 @@ public class SignUpServiceImpl implements SignUpService {
         OTP otp = otpRepository.getByIntentAndId(Intent.signUp, RequestOTPDto.getId()).orElseThrow(() -> new OTPTimedOutException("Confirmation code timed out or don't exist"));
         User user = userRepository.findById(otp.getUserId()).orElseThrow(() -> new UserNotFoundException("Linked user not found"));
         if (!user.getStatus().equals(UserStatus.pending)) throw new RequestDeniedException(String.format("User status is %s instead of %s", user.getStatus(), UserStatus.pending));
-        if (!otp.getValue().equals(RequestOTPDto.getValue())) throw new OTPException("Invalid 4-digits code");
+        if (!otp.getValue().equals(RequestOTPDto.getOTP())) throw new OTPException("Invalid 4-digits code");
         user.setStatus(UserStatus.active);
         userRepository.save(user);
         otpRepository.deleteByIdAndIntent(otp.getId(), otp.getIntent());
