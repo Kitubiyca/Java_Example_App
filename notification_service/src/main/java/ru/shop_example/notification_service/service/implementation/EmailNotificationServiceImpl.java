@@ -19,14 +19,18 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
     @Value("${mail.sender.name}")
     private String from;
 
-    public void sendOTP(OTPDto OTPDto){
+    @Value("${mail.sender.send}")
+    private Boolean send;
+
+    public void sendOTP(OTPDto OTPDto) {
         log.info("Called sendOTP service method");
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(from);
-        message.setTo(OTPDto.getEmail());
-        message.setSubject("Код подтверждения в Example_App");
-        message.setText(String.format("Здравствуйте, %s. Ваш код подтверждения: %s", OTPDto.getName(), OTPDto.getCode()));
-        //mailSender.send(message);
-        log.info("code is {}", OTPDto.getCode());
+        if (send) {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(from);
+            message.setTo(OTPDto.getEmail());
+            message.setSubject("Код подтверждения в Example_App");
+            message.setText(String.format("Здравствуйте, %s. Ваш код подтверждения: %s", OTPDto.getName(), OTPDto.getCode()));
+            mailSender.send(message);
+        } else log.info("code is {}", OTPDto.getCode());
     }
 }
