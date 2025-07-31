@@ -12,7 +12,7 @@
 
 [Завершённый микросервис.](/user_service)
 
-## Технологии и зависимости:
+## Технологии и зависимости
 
 **Основное**
  - Java 17
@@ -39,7 +39,7 @@
  - mapstruct-processor
  - lombok-mapstruct-binding
 
-## Эндпоинты:
+## Эндпоинты
 
 Эндпоинты (пока что без примеров запросов) описаны в swagger документации на gateway в разделе product-service:
 http://localhost:8081/swagger-ui.html

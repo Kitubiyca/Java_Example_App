@@ -21,7 +21,7 @@
 
 [Завершённый микросервис.](/user_service)
 
-## Технологии и зависимости:
+## Технологии и зависимости
 
 **Основное**
  - Java 17
@@ -60,6 +60,6 @@
 **Swagger Parser**
  - swagger-parser
 
-## Эндпоинты:
+## Эндпоинты
 
  - Swagger: http://localhost:8081/swagger-ui.html
