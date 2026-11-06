@@ -1,6 +1,7 @@
 package ru.shop_example.product_service.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -51,6 +52,7 @@ public class ProductTypeController {
             summary = "Создание нового типа продуктов",
             description = "Создаёт нвоый тип продуктов и возвращает его id",
             tags = {"AUTHENTICATED", "ROLE_MANAGER"},
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(
                             responseCode = "201",
@@ -72,6 +74,7 @@ public class ProductTypeController {
             summary = "Обновление продукта",
             description = "Обновляет продукт по id",
             tags = {"AUTHENTICATED", "ROLE_MANAGER"},
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(
                             responseCode = "204",
@@ -92,6 +95,7 @@ public class ProductTypeController {
             summary = "Удаление продукта",
             description = "Удаляет продукт по id",
             tags = {"AUTHENTICATED", "ROLE_MANAGER"},
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(
                             responseCode = "204",

@@ -1,11 +1,13 @@
 package ru.shop_example.product_service.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -55,6 +57,7 @@ public class ProductController {
             summary = "Создание нового продукта",
             description = "Возвращает DTO с id продукта",
             tags = {"AUTHENTICATED", "ROLE_MANAGER"},
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(
                             responseCode = "201",
@@ -76,6 +79,7 @@ public class ProductController {
             summary = "Обновление продукта",
             description = "Обновляет данные продукта",
             tags = {"AUTHENTICATED", "ROLE_MANAGER"},
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(
                             responseCode = "204",
@@ -96,6 +100,7 @@ public class ProductController {
             summary = "Удаление продукта",
             description = "Удаление продукта по id",
             tags = {"AUTHENTICATED", "ROLE_MANAGER"},
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(
                             responseCode = "204",
@@ -126,7 +131,7 @@ public class ProductController {
                             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
             })
     @GetMapping
-    public PageDto<ProductDto> getAllProducts(Pageable pageable){
+    public PageDto<ProductDto> getAllProducts(@ParameterObject Pageable pageable){
         log.info("Called getProductById controller method");
         Page<ProductDto> page = productService.getAllProducts(pageable).map(productMapper::productToProductDto);
         return pageMapper.PageToPageDto(page);
@@ -146,7 +151,7 @@ public class ProductController {
                             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
             })
     @GetMapping("byType/{typeId}")
-    public PageDto<ProductDto> getProductsByTypeId(@PathVariable UUID typeId, Pageable pageable){
+    public PageDto<ProductDto> getProductsByTypeId(@PathVariable UUID typeId, @ParameterObject Pageable pageable){
         log.info("Called getProductById controller method");
         Page<ProductDto> page = productService.getAllProductsByTypeId(typeId, pageable).map(productMapper::productToProductDto);
         return pageMapper.PageToPageDto(page);
@@ -166,7 +171,7 @@ public class ProductController {
                             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDto.class))}),
             })
     @GetMapping("search")
-    public PageDto<ProductDto> searchProducts(@RequestBody @Validated ProductSearchParamsDto productSearchParamsDto, Pageable pageable){
+    public PageDto<ProductDto> searchProducts(@RequestBody @Validated ProductSearchParamsDto productSearchParamsDto, @ParameterObject Pageable pageable){
         log.info("Called searchProducts controller method");
         Page<ProductDto> page = productService.searchProducts(productSearchParamsMapper.productSearchParamsDtoToProductSearchParams(productSearchParamsDto), pageable).map(productMapper::productToProductDto);
         return pageMapper.PageToPageDto(page);
