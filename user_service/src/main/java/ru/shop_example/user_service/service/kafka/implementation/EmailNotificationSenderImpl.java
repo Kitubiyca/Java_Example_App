@@ -22,6 +22,13 @@ public class EmailNotificationSenderImpl implements EmailNotificationSender {
      */
     public void sendToEmailOTPTopic(KafkaOTPDto kafkaOTPDto){
         log.info("Called sendToEmailOTPTopic kafka method");
-        kafkaTemplate.send("email-otp-topic", kafkaOTPDto);
+        try {
+            kafkaTemplate.send("email-otp-topic", kafkaOTPDto).get(10, java.util.concurrent.TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Kafka delivery interrupted", e);
+        } catch (java.util.concurrent.ExecutionException | java.util.concurrent.TimeoutException e) {
+            throw new IllegalStateException("Kafka delivery was not confirmed", e);
+        }
     }
 }

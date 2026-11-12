@@ -10,7 +10,7 @@ import ru.shop_example.user_service.dto.ResponseOTPIdDto;
 import ru.shop_example.user_service.dto.RequestEmailDto;
 import ru.shop_example.user_service.dto.RequestSignUpDto;
 import ru.shop_example.user_service.dto.RequestOTPDto;
-import ru.shop_example.user_service.dto.kafka.KafkaOTPDto;
+import ru.shop_example.user_service.outbox.OtpOutboxRepository;
 import ru.shop_example.user_service.entity.OTP;
 import ru.shop_example.user_service.entity.Role;
 import ru.shop_example.user_service.entity.User;
@@ -22,12 +22,10 @@ import ru.shop_example.user_service.repository.OTPRepository;
 import ru.shop_example.user_service.repository.RoleRepository;
 import ru.shop_example.user_service.repository.UserRepository;
 import ru.shop_example.user_service.service.SignUpService;
-import ru.shop_example.user_service.service.kafka.EmailNotificationSender;
+
 import ru.shop_example.user_service.util.OTPUtils;
 
-import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
 
 /**
  * Реализацию сервиса для обработки регистрации пользователя в приложении.
@@ -43,7 +41,7 @@ public class SignUpServiceImpl implements SignUpService {
     private final RoleRepository roleRepository;
     private final OTPRepository otpRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final EmailNotificationSender emailNotificationSender;
+    private final OtpOutboxRepository otpOutboxRepository;
     private final UserMapper userMapper;
     private final OTPUtils OTPUtils;
 
@@ -69,6 +67,7 @@ public class SignUpServiceImpl implements SignUpService {
     /**
      * {@inheritDoc}
      */
+    @Transactional
     public ResponseOTPIdDto resendOTPWithEmail(RequestEmailDto requestEmailDto){
         log.info("Called resendOTPWithEmail service method");
         User user = userRepository.findUserByEmail(requestEmailDto.getEmail()).orElseThrow(() -> new UserNotFoundException(String.format("User with email %s not found", requestEmailDto.getEmail())));
@@ -100,8 +99,7 @@ public class SignUpServiceImpl implements SignUpService {
      */
     private OTP handleOTP(User user){
         OTP otp = OTPUtils.createOTP(user.getId(), Intent.signUp);
-        otpRepository.set(otp, Duration.of(5, ChronoUnit.MINUTES));
-        emailNotificationSender.sendToEmailOTPTopic(new KafkaOTPDto(user.getFirstname(), user.getEmail(), otp.getValue()));
+        otpOutboxRepository.save(otp, user.getFirstname(), user.getEmail());
         return otp;
     }
 }

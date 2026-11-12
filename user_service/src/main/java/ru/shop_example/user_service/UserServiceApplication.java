@@ -7,6 +7,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import ru.shop_example.user_service.configuration.TokenProperties;
 
 @SpringBootApplication
+@org.springframework.scheduling.annotation.EnableScheduling
 @EnableFeignClients
 @EnableConfigurationProperties(TokenProperties.class)
 public class UserServiceApplication {

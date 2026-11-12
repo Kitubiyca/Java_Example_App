@@ -37,6 +37,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
+@org.springframework.test.context.TestPropertySource(properties = "outbox.initial-delay-ms=3600000")
 public class SignUpControllerIT implements AbstractIT {
 
     @Autowired
@@ -47,6 +48,10 @@ public class SignUpControllerIT implements AbstractIT {
     private UserRepository userRepository;
     @Autowired
     private OTPRepository otpRepository;
+    @Autowired
+    private ru.shop_example.user_service.outbox.OtpOutboxWorker outboxWorker;
+    @Autowired
+    private org.springframework.jdbc.core.JdbcTemplate jdbc;
 
     @Test
     @DisplayName("Должен проводить полную регистрацию нового пользователя")
@@ -70,6 +75,12 @@ public class SignUpControllerIT implements AbstractIT {
                 .andExpect(status().isOk())
                 .andReturn();
         ResponseOTPIdDto responseOTPIdDtoFirst = objectMapper.readValue(signUpRequestResult.getResponse().getContentAsString(), ResponseOTPIdDto.class);
+        assertThat(otpRepository.getByIntentAndId(Intent.signUp, responseOTPIdDtoFirst.getOTPId())).isEmpty();
+        assertThat(jdbc.queryForObject("SELECT redis_status FROM otp_outbox WHERE id = ?",
+                String.class, responseOTPIdDtoFirst.getOTPId())).isEqualTo("PENDING");
+        outboxWorker.poll();
+        assertThat(jdbc.queryForObject("SELECT kafka_status FROM otp_outbox WHERE id = ?",
+                String.class, responseOTPIdDtoFirst.getOTPId())).isEqualTo("SENT");
 
         //Send regenerate code request
         MvcResult resendConfirmationCodeRequestResult = mockMvc.perform(post("/sign-up/resend-confirmation-code")
@@ -78,16 +89,18 @@ public class SignUpControllerIT implements AbstractIT {
                 .andExpect(status().isOk())
                 .andReturn();
         ResponseOTPIdDto responseOTPIdDtoSecond = objectMapper.readValue(resendConfirmationCodeRequestResult.getResponse().getContentAsString(), ResponseOTPIdDto.class);
+        outboxWorker.poll();
 
         //Send confirmation request
-        ConsumerRecords<String, KafkaOTPDto> consumerRecords = KafkaTestUtils.getRecords(consumer, Duration.of(5, ChronoUnit.SECONDS));
+        ConsumerRecords<String, KafkaOTPDto> consumerRecords = KafkaTestUtils.getRecords(consumer, Duration.of(10, ChronoUnit.SECONDS), 2);
         List<ConsumerRecord<String, KafkaOTPDto>> consumerRecordList = new ArrayList<>();
         consumerRecords.records("email-otp-topic").forEach(consumerRecordList::add);
-        KafkaOTPDto kafkaOTPDto = consumerRecordList.get(consumerRecordList.size() - 1).value();
+        String code = otpRepository.getByIntentAndId(Intent.signUp, responseOTPIdDtoSecond.getOTPId()).orElseThrow().getValue();
+        assertThat(consumerRecordList).anySatisfy(record -> assertThat(record.value().getCode()).isEqualTo(code));
 
         RequestOTPDto requestOTPDto = new RequestOTPDto();
         requestOTPDto.setId(responseOTPIdDtoSecond.getOTPId());
-        requestOTPDto.setOTP(kafkaOTPDto.getCode());
+        requestOTPDto.setOTP(code);
 
         mockMvc.perform(post("/sign-up/confirm")
                         .contentType(MediaType.APPLICATION_JSON)

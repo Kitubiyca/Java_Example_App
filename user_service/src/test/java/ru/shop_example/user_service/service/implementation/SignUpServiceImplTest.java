@@ -12,7 +12,6 @@ import ru.shop_example.user_service.dto.RequestEmailDto;
 import ru.shop_example.user_service.dto.RequestOTPDto;
 import ru.shop_example.user_service.dto.RequestSignUpDto;
 import ru.shop_example.user_service.dto.ResponseOTPIdDto;
-import ru.shop_example.user_service.dto.kafka.KafkaOTPDto;
 import ru.shop_example.user_service.entity.OTP;
 import ru.shop_example.user_service.entity.Role;
 import ru.shop_example.user_service.entity.User;
@@ -23,13 +22,10 @@ import ru.shop_example.user_service.mapper.UserMapper;
 import ru.shop_example.user_service.repository.OTPRepository;
 import ru.shop_example.user_service.repository.RoleRepository;
 import ru.shop_example.user_service.repository.UserRepository;
-import ru.shop_example.user_service.service.kafka.EmailNotificationSender;
 import ru.shop_example.user_service.util.OTPUtils;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -51,7 +47,7 @@ public class SignUpServiceImplTest {
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
     @Mock
-    private EmailNotificationSender emailNotificationSender;
+    private ru.shop_example.user_service.outbox.OtpOutboxRepository otpOutboxRepository;
     @Mock
     private UserMapper userMapper;
     @Mock
@@ -84,8 +80,8 @@ public class SignUpServiceImplTest {
         //Verify
         assertEquals(expected, result);
         verify(userRepository).save(eq(user));
-        verify(otpRepository).set(eq(otp), eq(Duration.of(5, ChronoUnit.MINUTES)));
-        verify(emailNotificationSender).sendToEmailOTPTopic(eq(new KafkaOTPDto(user.getFirstname(), user.getEmail(), otp.getValue())));
+        verify(otpOutboxRepository).save(otp, user.getFirstname(), user.getEmail());
+        org.mockito.Mockito.verifyNoInteractions(otpRepository);
     }
 
     @Test
@@ -164,8 +160,8 @@ public class SignUpServiceImplTest {
 
         //Verify
         assertEquals(expected, result);
-        verify(otpRepository).set(eq(otp), eq(Duration.of(5, ChronoUnit.MINUTES)));
-        verify(emailNotificationSender).sendToEmailOTPTopic(eq(new KafkaOTPDto(user.getFirstname(), user.getEmail(), otp.getValue())));
+        verify(otpOutboxRepository).save(otp, user.getFirstname(), user.getEmail());
+        org.mockito.Mockito.verifyNoInteractions(otpRepository);
     }
 
     @Test
